@@ -82,20 +82,31 @@ export async function sendChatMessage(
   const model = getModel(config);
   const MAX_TOOL_ROUNDS = 5;
 
-  // Build the conversation — strip any tool-related messages for clean history
-  const conversation: ChatMessage[] = [...messages];
+  // Clean incoming messages: strip tool-related history from previous turns
+  // LM Studio templates choke on tool_call/tool messages in history
+  const cleanIncoming = messages
+    .filter(m => m.role !== 'tool')
+    .map(m => {
+      if (m.role === 'assistant' && m.tool_calls) {
+        // Keep the assistant text, drop the tool_calls
+        return { role: m.role as const, content: m.content || '' };
+      }
+      return m;
+    });
+
+  // Working conversation starts clean — tool messages only added within current round
+  const conversation: ChatMessage[] = [...cleanIncoming];
 
   // First, try WITH tools. If the model doesn't support them, fall back to no tools.
   let useTools = true;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    // Clean conversation: remove tool-related messages if tools are disabled
+    // For sending: if tools disabled, use clean conversation without any tool artifacts
     const cleanMessages = useTools
       ? conversation
       : conversation.filter(m => m.role !== 'tool').map(m => {
-          // Strip tool_calls from assistant messages
           if (m.role === 'assistant' && m.tool_calls) {
-            return { role: m.role, content: m.content || '(tool call attempted)' };
+            return { role: m.role as const, content: m.content || '' };
           }
           return m;
         });
