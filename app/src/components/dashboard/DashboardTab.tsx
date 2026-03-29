@@ -7,6 +7,8 @@ import OSINTPanel from './OSINTPanel';
 import LiveScanPanel from './LiveScanPanel';
 import MethodologyPanel from './MethodologyPanel';
 import AlertBanner from './AlertBanner';
+import ReadinessScore from './ReadinessScore';
+import SeasonalReminder from './SeasonalReminder';
 
 export default function DashboardTab() {
   const { data, loading, error, fetchData } = useThreatStore();
@@ -81,6 +83,14 @@ export default function DashboardTab() {
           <ThreatHero overall={assessment.overall} />
           <ThreatCardGrid assessment={assessment} />
           {assessment.diamond && <DiamondIndex diamond={assessment.diamond} />}
+        </div>
+      </div>
+
+      {/* Readiness & Seasonal */}
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4">
+          <ReadinessScore />
+          <SeasonalReminder />
         </div>
       </div>
 

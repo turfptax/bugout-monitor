@@ -4,6 +4,7 @@ import RallyPointRow from './RallyPointRow';
 import HelpIcon from '../layout/HelpIcon';
 
 const RouteMap = lazy(() => import('./RouteMap'));
+import GearMatrix from './GearMatrix';
 import { useEquipmentStore } from '../../store/useEquipmentStore';
 import { useThreatStore } from '../../store/useThreatStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
@@ -722,6 +723,11 @@ export default function PlanTab() {
                 </div>
               );
             })}
+          </div>
+
+          {/* Cross-Scenario Gear Matrix */}
+          <div className="mt-6">
+            <GearMatrix />
           </div>
         </div>
 
