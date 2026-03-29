@@ -1,0 +1,56 @@
+[
+  {"name": "Tactical Backpack (40-50L)", "qty": "2", "category": "Carry & Transport", "notes": "One per person — MOLLE compatible"},
+  {"name": "Hard Case (wheeled, waterproof)", "qty": "1", "category": "Carry & Transport", "notes": "For critical electronics and documents"},
+  {"name": "Collapsible Wagon", "qty": "1", "category": "Carry & Transport", "notes": "All-terrain wheels — haul cases and water on foot"},
+  {"name": "Trekking Poles (collapsible)", "qty": "1", "category": "Carry & Transport", "notes": "Reduces fatigue on long foot travel"},
+
+  {"name": "Dual-Band Radio (VHF/UHF)", "qty": "2", "category": "Communications", "notes": "Primary voice comms — one per person"},
+  {"name": "FRS Walkie-Talkies", "qty": "2", "category": "Communications", "notes": "Backup voice — simpler to use, 1-2 mi range"},
+  {"name": "Hand-Crank Emergency Radio", "qty": "2", "category": "Communications", "notes": "AM/FM/NOAA — no batteries needed"},
+  {"name": "Meshtastic LoRa Device", "qty": "2", "category": "Communications", "notes": "Encrypted text + GPS, no infrastructure needed"},
+
+  {"name": "Emergency Survival Tent", "qty": "2", "category": "Shelter & Warmth", "notes": "Thermal reflective — one per person"},
+  {"name": "Sleeping Bag (rated to 20°F)", "qty": "2", "category": "Shelter & Warmth", "notes": "Compact, one per person"},
+
+  {"name": "Portable Rocket Stove", "qty": "1", "category": "Fire & Cooking", "notes": "Wood-burning, burns sticks and twigs"},
+  {"name": "Camping Cookware Set", "qty": "1", "category": "Fire & Cooking", "notes": "Pot, pan, utensils"},
+  {"name": "Magnesium Fire Starter", "qty": "2", "category": "Fire & Cooking", "notes": "Ferro rod + striker + waterproof tinder"},
+
+  {"name": "Personal Water Filter (LifeStraw-type)", "qty": "3", "category": "Water", "notes": "Filters 1000+ gallons each"},
+  {"name": "Collapsible Water Container (5 gal)", "qty": "3", "category": "Water", "notes": "15 gallons total capacity"},
+  {"name": "Water Purification Tablets", "qty": "1", "category": "Water", "notes": "Backup when you can't filter"},
+
+  {"name": "Survival Knife (full-tang)", "qty": "2", "category": "Tools & Blades", "notes": "One per person — with sharpener"},
+  {"name": "Pocket Chain Saw", "qty": "2", "category": "Tools & Blades", "notes": "Cut firewood, clear paths"},
+  {"name": "Multi-tool", "qty": "1", "category": "Tools & Blades", "notes": "Pliers, screwdrivers, blade"},
+
+  {"name": "Foldable Solar Panel (40W)", "qty": "1", "category": "Power", "notes": "USB-C + USB-A output — primary charger"},
+  {"name": "Portable Power Bank (20000+ mAh)", "qty": "2", "category": "Power", "notes": "One per person — charges radios, phones"},
+  {"name": "Rechargeable Batteries (18650)", "qty": "4", "category": "Power", "notes": "For flashlights and devices"},
+
+  {"name": "Geiger Counter / Radiation Detector", "qty": "1", "category": "Detection & Optics", "notes": "Critical for nuclear scenarios"},
+  {"name": "Compact Binoculars", "qty": "1", "category": "Detection & Optics", "notes": "Scouting and route assessment"},
+
+  {"name": "Faraday Bags", "qty": "5", "category": "EMP / Faraday Protection", "notes": "Protect radios, devices from EMP"},
+
+  {"name": "Rechargeable Headlamp", "qty": "2", "category": "Light", "notes": "Hands-free — one per person"},
+  {"name": "Tealight Candles", "qty": "50", "category": "Light", "notes": "Shelter-in-place lighting, no batteries"},
+
+  {"name": "72-Hour Freeze-Dried Meals", "qty": "2", "category": "Food", "notes": "One per person — Mountain House or ReadyWise"},
+  {"name": "Energy Bars / Trail Mix", "qty": "30", "category": "Food", "notes": "Quick calories for go-bags"},
+
+  {"name": "State Road Atlas / Topo Map", "qty": "1", "category": "Navigation", "notes": "Paper maps — GPS may be down"},
+  {"name": "Quality Compass", "qty": "1", "category": "Navigation", "notes": "Suunto or Silva — learn to use it"},
+
+  {"name": "550 Paracord (100ft)", "qty": "1", "category": "Cordage & Repair", "notes": "Shelter, repair, snares, clothesline"},
+  {"name": "Duct Tape", "qty": "1", "category": "Cordage & Repair", "notes": "Wrap around water bottle to save space"},
+
+  {"name": "IFAK (Individual First Aid Kit)", "qty": "1", "category": "Medical & Hygiene", "notes": "Tourniquet, QuikClot, Israeli bandage, chest seal"},
+  {"name": "Ibuprofen 200mg", "qty": "100", "category": "Medical & Hygiene", "notes": "Anti-inflammatory / pain relief"},
+  {"name": "Acetaminophen 500mg", "qty": "100", "category": "Medical & Hygiene", "notes": "Pain relief / fever reducer"},
+  {"name": "Antibiotic Ointment", "qty": "25", "category": "Medical & Hygiene", "notes": "Wound infection prevention"},
+  {"name": "Quick-Dry Towels (microfiber)", "qty": "2", "category": "Medical & Hygiene", "notes": "Hygiene, wound care, utility"},
+
+  {"name": "Survival Manual (FM 21-76)", "qty": "2", "category": "Knowledge & Reference", "notes": "One per pack — shelter, water, food, navigation"},
+  {"name": "Regional Foraging Guide", "qty": "1", "category": "Knowledge & Reference", "notes": "Identify edible plants in your area"}
+]

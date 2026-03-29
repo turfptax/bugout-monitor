@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSettingsStore, type AiProvider } from '../../store/useSettingsStore';
-import { testConnection } from '../../lib/aiClient';
+import { testConnection, scanForLMStudio, type DiscoveredServer } from '../../lib/aiClient';
 
 const OPENROUTER_MODELS = [
   { id: 'google/gemini-2.0-flash-001', label: 'Gemini 2.0 Flash' },
@@ -28,6 +28,9 @@ export default function AiProviderCard() {
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ ok: boolean; error?: string; models?: string[] } | null>(null);
   const [lmModels, setLmModels] = useState<string[]>([]);
+  const [scanning, setScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState('');
+  const [discoveredServers, setDiscoveredServers] = useState<DiscoveredServer[]>([]);
 
   // Clear test result when provider changes
   useEffect(() => {
@@ -173,17 +176,91 @@ export default function AiProviderCard() {
         <div className="space-y-3 animate-fade-in">
           <div>
             <label className="text-xs text-text-dim block mb-1">Server URL</label>
-            <input
-              type="text"
-              value={lmstudioUrl}
-              onChange={(e) => setLmstudioUrl(e.target.value)}
-              placeholder="http://localhost:1234"
-              className="w-full bg-surface-2 border border-border rounded px-3 py-1.5 text-sm text-text-primary
-                placeholder:text-text-dim/40 outline-none focus:border-accent/50 transition-colors"
-            />
-            <p className="text-[10px] text-text-dim mt-1">
-              Start LM Studio and enable the local server. Default port is 1234.
-            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={lmstudioUrl}
+                onChange={(e) => setLmstudioUrl(e.target.value)}
+                placeholder="http://localhost:1234"
+                className="flex-1 bg-surface-2 border border-border rounded px-3 py-1.5 text-sm text-text-primary
+                  placeholder:text-text-dim/40 outline-none focus:border-accent/50 transition-colors"
+              />
+              <button
+                onClick={async () => {
+                  setScanning(true);
+                  setScanProgress('Scanning network...');
+                  setDiscoveredServers([]);
+                  const servers = await scanForLMStudio((server) => {
+                    setDiscoveredServers(prev => [...prev, server]);
+                    setScanProgress(`Found ${server.hostname}...`);
+                  });
+                  setScanProgress(servers.length === 0 ? 'No LM Studio servers found on network' : `Found ${servers.length} server${servers.length !== 1 ? 's' : ''}`);
+                  setScanning(false);
+                }}
+                disabled={scanning}
+                className="px-3 py-1.5 rounded text-xs font-medium bg-accent-2/10 text-accent-2 border border-accent-2/30
+                  hover:bg-accent-2/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap"
+              >
+                {scanning ? (
+                  <span className="flex items-center gap-1.5">
+                    <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                    Scanning...
+                  </span>
+                ) : '🔍 Scan Network'}
+              </button>
+            </div>
+            {scanProgress && (
+              <p className="text-[10px] text-text-dim mt-1">{scanProgress}</p>
+            )}
+          </div>
+
+          {/* Discovered servers */}
+          {discoveredServers.length > 0 && (
+            <div className="space-y-1.5">
+              <label className="text-xs text-text-dim block">Discovered LM Studio Servers:</label>
+              {discoveredServers.map((server) => (
+                <button
+                  key={server.url}
+                  onClick={() => {
+                    setLmstudioUrl(server.url);
+                    setLmModels(server.models);
+                    if (server.models.length > 0) {
+                      setLmstudioModel(server.models[0]);
+                    }
+                    setTestResult({ ok: true, models: server.models });
+                  }}
+                  className={`w-full flex items-center justify-between p-2.5 rounded-lg border text-left cursor-pointer transition-all duration-150
+                    ${lmstudioUrl === server.url
+                      ? 'border-threat-green bg-threat-green/10 text-threat-green'
+                      : 'border-border bg-surface-2 text-text-primary hover:border-accent/40'
+                    }`}
+                >
+                  <div>
+                    <div className="text-xs font-medium flex items-center gap-1.5">
+                      <span className="inline-block w-2 h-2 rounded-full bg-threat-green"></span>
+                      {server.url}
+                    </div>
+                    <div className="text-[10px] text-text-dim mt-0.5">
+                      {server.models.length} model{server.models.length !== 1 ? 's' : ''}: {server.models.slice(0, 2).join(', ')}{server.models.length > 2 ? ` +${server.models.length - 2} more` : ''}
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-accent">
+                    {lmstudioUrl === server.url ? '✓ Selected' : 'Use →'}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="bg-surface-2 border border-border rounded p-3 text-[11px] text-text-dim leading-relaxed">
+            <p className="font-semibold text-text-primary mb-1.5">LM Studio Setup:</p>
+            <ol className="list-decimal list-inside space-y-1">
+              <li>Open LM Studio and <span className="text-accent">load a model</span></li>
+              <li>Click the <span className="text-accent">&lt;/&gt; Local Server</span> tab (left sidebar)</li>
+              <li>Click <span className="text-threat-green font-semibold">Start Server</span></li>
+              <li>In server settings, enable <span className="text-accent">"Enable CORS"</span> (required for browser access)</li>
+              <li>Click "Detect Models" below to verify</li>
+            </ol>
           </div>
           <div>
             <label className="text-xs text-text-dim block mb-1">Model</label>
@@ -233,14 +310,14 @@ export default function AiProviderCard() {
               Connected{testResult.models ? ` \u2014 ${testResult.models.length} model${testResult.models.length !== 1 ? 's' : ''} available` : ''}
             </>
           ) : (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="flex items-start gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="flex-shrink-0 mt-0.5">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="15" y1="9" x2="9" y2="15" />
                 <line x1="9" y1="9" x2="15" y2="15" />
               </svg>
-              {testResult.error}
-            </>
+              <span className="whitespace-pre-line">{testResult.error}</span>
+            </div>
           )}
         </div>
       )}

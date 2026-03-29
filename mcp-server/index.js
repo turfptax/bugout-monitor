@@ -195,6 +195,103 @@ server.tool(
 );
 
 server.tool(
+  'bulk_add_equipment',
+  'Add multiple items to the equipment inventory at once. Use this when the user asks you to build an equipment list, suggest gear, or populate their inventory. Items with duplicate names (case-insensitive) in the same category will be skipped.',
+  {
+    items: z.array(z.object({
+      name: z.string().describe('Item name'),
+      qty: z.string().describe('Quantity'),
+      category: z.string().describe('Category (must be one of the 15 valid categories)'),
+      notes: z.string().optional().describe('Notes'),
+    })).describe('Array of items to add'),
+  },
+  async ({ items: newItems }) => {
+    const existing = await getEquipment();
+    const existingSet = new Set(existing.map(i => `${i.name}|${i.category}`.toLowerCase()));
+
+    let added = 0;
+    let skipped = 0;
+
+    for (const item of newItems) {
+      const key = `${item.name}|${item.category}`.toLowerCase();
+      if (existingSet.has(key)) {
+        skipped++;
+        continue;
+      }
+      existing.push({
+        id: 'mcp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        name: item.name,
+        qty: item.qty,
+        category: item.category,
+        notes: item.notes || '',
+        added: new Date().toISOString(),
+      });
+      existingSet.add(key);
+      added++;
+    }
+
+    await saveEquipment(existing);
+    return {
+      content: [{
+        type: 'text',
+        text: `Bulk import complete: ${added} items added, ${skipped} duplicates skipped. Total inventory: ${existing.length} items.`
+      }]
+    };
+  }
+);
+
+server.tool(
+  'suggest_equipment',
+  'Analyze the current equipment inventory and suggest missing items for a complete 72-hour bugout kit. Returns a gap analysis with recommendations.',
+  {},
+  async () => {
+    const items = await getEquipment();
+    const categories = {};
+    items.forEach(i => {
+      if (!categories[i.category]) categories[i.category] = [];
+      categories[i.category].push(i.name.toLowerCase());
+    });
+
+    const RECOMMENDED = {
+      'Water': ['water filter', 'water container', 'purification tablets'],
+      'Food': ['freeze-dried meals', 'energy bars', 'trail mix'],
+      'Shelter & Warmth': ['tent', 'sleeping bag', 'blanket'],
+      'Fire & Cooking': ['fire starter', 'stove', 'cookware'],
+      'Communications': ['radio', 'walkie-talkie', 'hand-crank radio'],
+      'Medical & Hygiene': ['first aid kit', 'pain relief', 'antibiotic', 'tourniquet'],
+      'Navigation': ['map', 'compass'],
+      'Light': ['headlamp', 'flashlight'],
+      'Power': ['solar panel', 'power bank', 'batteries'],
+      'Tools & Blades': ['knife', 'multi-tool'],
+      'Cordage & Repair': ['paracord', 'duct tape'],
+      'Knowledge & Reference': ['survival manual'],
+      'Carry & Transport': ['backpack'],
+      'Detection & Optics': ['binoculars'],
+    };
+
+    const lines = ['Equipment Gap Analysis:', ''];
+    let totalGaps = 0;
+
+    for (const [cat, recs] of Object.entries(RECOMMENDED)) {
+      const catItems = categories[cat] || [];
+      const missing = recs.filter(rec =>
+        !catItems.some(item => item.includes(rec) || rec.includes(item.split(' ')[0]))
+      );
+      if (missing.length > 0) {
+        totalGaps += missing.length;
+        lines.push(`❌ ${cat}: missing ${missing.join(', ')}`);
+      } else {
+        lines.push(`✅ ${cat}: covered`);
+      }
+    }
+
+    lines.push('', `Total gaps: ${totalGaps}. ${totalGaps === 0 ? 'Your kit looks complete!' : 'Use add_equipment or bulk_add_equipment to fill these gaps.'}`);
+
+    return { content: [{ type: 'text', text: lines.join('\n') }] };
+  }
+);
+
+server.tool(
   'get_rally_points',
   'Get the current rally point meeting locations',
   {},

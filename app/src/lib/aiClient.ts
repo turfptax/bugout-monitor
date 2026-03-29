@@ -57,7 +57,21 @@ export async function sendChatMessage(
     temperature: 0.7,
   });
 
-  const response = await fetch(endpoint, { method: 'POST', headers, body });
+  let response: Response;
+  try {
+    response = await fetch(endpoint, { method: 'POST', headers, body });
+  } catch (fetchErr) {
+    if (config.provider === 'lmstudio') {
+      throw new Error(
+        'Cannot reach LM Studio. Make sure:\n' +
+        '1. LM Studio is open with a model loaded\n' +
+        '2. The Local Server is running\n' +
+        '3. CORS is enabled in server settings\n\n' +
+        'Go to Settings → AI Assistant to configure.'
+      );
+    }
+    throw new Error('Network error — check your internet connection.');
+  }
 
   if (!response.ok) {
     const errorText = await response.text().catch(() => '');
@@ -115,6 +129,89 @@ export async function sendChatMessage(
   return fullText;
 }
 
+export interface DiscoveredServer {
+  url: string;
+  models: string[];
+  hostname: string;
+}
+
+/**
+ * Scan the local network for LM Studio instances.
+ * Checks localhost + common LAN IPs on port 1234 (default LM Studio port).
+ * Also checks port 1235, 5000, 8080 as common alternatives.
+ */
+export async function scanForLMStudio(
+  onFound?: (server: DiscoveredServer) => void
+): Promise<DiscoveredServer[]> {
+  const found: DiscoveredServer[] = [];
+  const ports = [1234, 1235];
+  const timeout = 1500; // ms per probe
+
+  // Build candidate list: localhost + local network IPs
+  const candidates: string[] = [
+    'localhost',
+    '127.0.0.1',
+  ];
+
+  // Detect local subnet — try common private ranges
+  // We'll probe the /24 subnet of common ranges
+  const subnets = ['192.168.1', '192.168.0', '10.0.0', '172.16.0'];
+
+  // To find the actual subnet, we can check if any known IPs respond
+  // But for speed, we'll probe a focused range (1-30) on each subnet + broadcast common IPs
+  for (const subnet of subnets) {
+    for (let i = 1; i <= 30; i++) {
+      candidates.push(`${subnet}.${i}`);
+    }
+    // Also check .100-.110 range (common DHCP assignments)
+    for (let i = 100; i <= 115; i++) {
+      candidates.push(`${subnet}.${i}`);
+    }
+  }
+
+  // Deduplicate
+  const uniqueCandidates = [...new Set(candidates)];
+
+  // Probe each candidate in parallel with a timeout
+  const probeOne = async (host: string, port: number): Promise<DiscoveredServer | null> => {
+    const url = `http://${host}:${port}`;
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
+      const res = await fetch(`${url}/v1/models`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (!res.ok) return null;
+      const json = await res.json();
+      const models = (json.data || []).map((m: { id: string }) => m.id);
+      if (models.length === 0) return null;
+      const server: DiscoveredServer = { url, models, hostname: host };
+      if (onFound) onFound(server);
+      found.push(server);
+      return server;
+    } catch {
+      return null;
+    }
+  };
+
+  // Probe in batches to avoid overwhelming the network
+  const BATCH_SIZE = 20;
+  const allProbes: Array<{ host: string; port: number }> = [];
+  for (const host of uniqueCandidates) {
+    for (const port of ports) {
+      allProbes.push({ host, port });
+    }
+  }
+
+  for (let i = 0; i < allProbes.length; i += BATCH_SIZE) {
+    const batch = allProbes.slice(i, i + BATCH_SIZE);
+    await Promise.all(batch.map(({ host, port }) => probeOne(host, port)));
+  }
+
+  return found;
+}
+
 export async function testConnection(
   config: AiClientConfig
 ): Promise<{ ok: boolean; error?: string; models?: string[] }> {
@@ -125,25 +222,51 @@ export async function testConnection(
   try {
     if (config.provider === 'lmstudio') {
       const base = (config.lmstudioUrl || 'http://localhost:1234').replace(/\/+$/, '');
-      const res = await fetch(`${base}/v1/models`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      let res: Response;
+      try {
+        res = await fetch(`${base}/v1/models`);
+      } catch (fetchErr) {
+        // fetch() itself failed — this is almost always CORS or server not running
+        const errMsg = fetchErr instanceof Error ? fetchErr.message : '';
+        if (errMsg.includes('Failed to fetch') || errMsg.includes('NetworkError') || errMsg.includes('CORS')) {
+          return {
+            ok: false,
+            error: `Cannot reach LM Studio at ${base}. Check these steps:\n` +
+              `1. Open LM Studio and load a model\n` +
+              `2. Go to the "Local Server" tab (left sidebar, </> icon)\n` +
+              `3. Click "Start Server" if it's not running\n` +
+              `4. Enable CORS: In the server settings, turn ON "Enable CORS" or set the CORS origin to "*"\n` +
+              `5. Verify the server is running at ${base}/v1/models in your browser`
+          };
+        }
+        throw fetchErr;
+      }
+      if (!res.ok) throw new Error(`LM Studio responded with HTTP ${res.status}. Is the server running and a model loaded?`);
       const json = await res.json();
       const models = (json.data || []).map((m: { id: string }) => m.id);
+      if (models.length === 0) {
+        return { ok: false, error: 'LM Studio server is running but no models are loaded. Load a model in LM Studio first, then try again.' };
+      }
       return { ok: true, models };
     }
 
     // OpenRouter: send a tiny completion to validate key
     const endpoint = getEndpoint(config);
     const headers = getHeaders(config);
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        model: getModel(config),
-        messages: [{ role: 'user', content: 'hi' }],
-        max_tokens: 1,
-      }),
-    });
+    let res: Response;
+    try {
+      res = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: getModel(config),
+          messages: [{ role: 'user', content: 'hi' }],
+          max_tokens: 1,
+        }),
+      });
+    } catch (fetchErr) {
+      return { ok: false, error: 'Cannot reach OpenRouter. Check your internet connection.' };
+    }
     if (!res.ok) {
       const text = await res.text().catch(() => '');
       let msg = `HTTP ${res.status}`;
@@ -151,6 +274,9 @@ export async function testConnection(
         const parsed = JSON.parse(text);
         msg = parsed.error?.message || msg;
       } catch { /* use default msg */ }
+      if (res.status === 401 || res.status === 403) {
+        msg = 'Invalid API key. Check your OpenRouter key and try again.';
+      }
       throw new Error(msg);
     }
     return { ok: true };
