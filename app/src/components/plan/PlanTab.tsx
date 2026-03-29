@@ -13,7 +13,13 @@ import type { EquipmentItem } from '../../types/equipment';
 function readJson<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    // Deep merge with fallback so missing fields get defaults
+    if (typeof fallback === 'object' && fallback !== null && !Array.isArray(fallback)) {
+      return { ...fallback, ...parsed } as T;
+    }
+    return parsed;
   } catch {
     return fallback;
   }
@@ -26,23 +32,24 @@ function writeJson(key: string, value: unknown) {
 // ── Editable cell component for tables ──
 
 function EditableCell({
-  value,
+  value: rawValue,
   placeholder,
   onChange,
   className = '',
 }: {
-  value: string;
+  value: string | undefined | null;
   placeholder: string;
   onChange: (v: string) => void;
   className?: string;
 }) {
+  const value = rawValue ?? '';
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
 
   useEffect(() => setDraft(value), [value]);
 
   const commit = () => {
-    onChange(draft);
+    onChange(draft ?? '');
     setEditing(false);
   };
 
@@ -50,7 +57,7 @@ function EditableCell({
     return (
       <input
         autoFocus
-        value={draft}
+        value={draft ?? ''}
         onChange={(e) => setDraft(e.target.value)}
         onBlur={commit}
         onKeyDown={(e) => {
@@ -62,7 +69,7 @@ function EditableCell({
     );
   }
 
-  const hasValue = value.trim().length > 0;
+  const hasValue = (value ?? '').trim().length > 0;
   return (
     <span
       onClick={() => { setDraft(value); setEditing(true); }}
@@ -533,8 +540,8 @@ export default function PlanTab() {
           {location.city && location.state ? (
             <p className="text-sm text-text-dim mb-3">
               Location: <span className="text-text-primary font-medium">{location.city}, {location.state}</span>
-              {location.nearbyTargets.length > 0 && (
-                <> &mdash; Nearby targets: <span className="text-threat-yellow">{location.nearbyTargets.join(', ')}</span></>
+              {(location.nearbyTargets || []).length > 0 && (
+                <> &mdash; Nearby targets: <span className="text-threat-yellow">{(location.nearbyTargets || []).join(', ')}</span></>
               )}
             </p>
           ) : (
