@@ -1,7 +1,9 @@
-import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo, lazy, Suspense } from 'react';
 import PlanSidebar, { sections } from './PlanSidebar';
 import RallyPointRow from './RallyPointRow';
 import HelpIcon from '../layout/HelpIcon';
+
+const RouteMap = lazy(() => import('./RouteMap'));
 import { useEquipmentStore } from '../../store/useEquipmentStore';
 import { useThreatStore } from '../../store/useThreatStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
@@ -893,6 +895,11 @@ export default function PlanTab() {
           <p className="text-sm text-text-dim mb-4">
             All routes originate from {location.city || 'your location'}. Click any field to edit. Avoid Omaha at all costs.
           </p>
+
+          {/* Route Map */}
+          <Suspense fallback={<div className="h-[400px] rounded-lg border border-border bg-surface-2 flex items-center justify-center text-text-dim text-sm">Loading map...</div>}>
+            <RouteMap />
+          </Suspense>
 
           {routeIds.map(({ id, label, sublabel }) => {
             const r = routes[id] || { name: '', path: '', distance: '', destination: '', waypoints: '', notes: '' };

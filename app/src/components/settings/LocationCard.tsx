@@ -46,6 +46,31 @@ export default function LocationCard() {
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label className="block text-[0.68rem] text-text-dim uppercase tracking-wider mb-1">Latitude</label>
+          <input
+            type="number"
+            step="any"
+            value={location.latitude ?? ''}
+            onChange={(e) => setLocation({ latitude: e.target.value ? parseFloat(e.target.value) : null })}
+            placeholder="e.g. 40.8136"
+            className="w-full bg-surface-2 border border-border rounded px-3 py-1.5 text-sm text-text-primary placeholder:text-text-dim/50 focus:outline-none focus:border-accent transition-colors"
+          />
+        </div>
+        <div>
+          <label className="block text-[0.68rem] text-text-dim uppercase tracking-wider mb-1">Longitude</label>
+          <input
+            type="number"
+            step="any"
+            value={location.longitude ?? ''}
+            onChange={(e) => setLocation({ longitude: e.target.value ? parseFloat(e.target.value) : null })}
+            placeholder="e.g. -96.7026"
+            className="w-full bg-surface-2 border border-border rounded px-3 py-1.5 text-sm text-text-primary placeholder:text-text-dim/50 focus:outline-none focus:border-accent transition-colors"
+          />
+        </div>
+      </div>
+
       <div>
         <label className="block text-[0.68rem] text-text-dim uppercase tracking-wider mb-1">
           Nearby Targets / Points of Interest

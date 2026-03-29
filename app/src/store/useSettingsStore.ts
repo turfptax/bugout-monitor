@@ -14,6 +14,8 @@ interface SettingsState {
   location: {
     city: string;
     state: string;
+    latitude: number | null;
+    longitude: number | null;
     nearbyTargets: string[];
   };
   aiProvider: AiProvider;
@@ -43,6 +45,8 @@ export const useSettingsStore = create<SettingsState>()(
       location: {
         city: '',
         state: '',
+        latitude: null,
+        longitude: null,
         nearbyTargets: [],
       },
       aiProvider: 'none',
