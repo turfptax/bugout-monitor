@@ -1,5 +1,6 @@
 @echo off
-setlocal enabledelayedexpansion
+REM ── Always run from the directory this script lives in ──
+cd /d "%~dp0"
 
 echo.
 echo  ========================================================
@@ -8,6 +9,7 @@ echo  ========================================================
 echo.
 echo  This will set up the Bugout Monitor on your system.
 echo  Requirements: Node.js 18+ and Git
+echo  Working directory: %CD%
 echo.
 
 REM ── Check for Node.js ──
@@ -23,18 +25,6 @@ if %ERRORLEVEL% neq 0 (
     pause
     exit /b 1
 )
-
-REM ── Check Node version ──
-for /f "tokens=1 delims=v" %%a in ('node -v') do set NODE_VER=%%a
-for /f "tokens=1 delims=." %%a in ('node -v') do set NODE_MAJOR=%%a
-set NODE_MAJOR=%NODE_MAJOR:v=%
-if %NODE_MAJOR% LSS 18 (
-    echo  [ERROR] Node.js version 18 or higher is required.
-    echo  You have: %NODE_VER%
-    echo  Please update: https://nodejs.org/en/download
-    pause
-    exit /b 1
-)
 echo  [OK] Node.js found:
 node -v
 
@@ -47,10 +37,10 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 echo  [OK] npm found:
-npm -v
+call npm -v
 
 echo.
-echo  ── Step 1: Installing root dependencies ──
+echo  -- Step 1 of 4: Installing root dependencies --
 echo.
 call npm install
 if %ERRORLEVEL% neq 0 (
@@ -58,100 +48,73 @@ if %ERRORLEVEL% neq 0 (
     pause
     exit /b 1
 )
+echo.
 echo  [OK] Root dependencies installed.
 
 echo.
-echo  ── Step 2: Installing React app dependencies ──
+echo  -- Step 2 of 4: Installing React app dependencies --
 echo.
-cd app
+cd /d "%~dp0app"
 call npm install
 if %ERRORLEVEL% neq 0 (
     echo  [ERROR] npm install failed for React app.
-    cd ..
+    cd /d "%~dp0"
     pause
     exit /b 1
 )
-cd ..
+cd /d "%~dp0"
+echo.
 echo  [OK] React app dependencies installed.
 
 echo.
-echo  ── Step 3: Installing MCP server dependencies ──
+echo  -- Step 3 of 4: Installing MCP server dependencies --
 echo.
-cd mcp-server
+cd /d "%~dp0mcp-server"
 call npm install
 if %ERRORLEVEL% neq 0 (
-    echo  [WARNING] MCP server install failed. MCP features may not work.
-    echo  You can install later with: cd mcp-server ^&^& npm install
+    echo  [WARNING] MCP server install had issues. MCP features may need manual setup.
 )
-cd ..
+cd /d "%~dp0"
+echo.
 echo  [OK] MCP server dependencies installed.
 
 echo.
-echo  ── Step 4: Building the React app ──
+echo  -- Step 4 of 4: Building the React app --
 echo.
-cd app
+cd /d "%~dp0app"
 call npx vite build
 if %ERRORLEVEL% neq 0 (
+    echo.
     echo  [WARNING] React app build failed. You can still run in dev mode.
-    echo  Run: cd app ^&^& npx vite --host
+    echo  Run: cd app ^& npx vite --host
+    cd /d "%~dp0"
 ) else (
+    echo.
     echo  [OK] React app built successfully.
-    REM Copy built files to root dist
-    if not exist "..\dist" mkdir "..\dist"
-    xcopy /E /Y /Q "dist\*" "..\dist\" >nul 2>&1
-    echo  [OK] Built files copied to dist/
+    cd /d "%~dp0"
+    if not exist "dist" mkdir "dist"
+    xcopy /E /Y /Q "app\dist\*" "dist\" >nul 2>&1
+    echo  [OK] Built files copied to dist\
 )
-cd ..
-
-echo.
-echo  ── Step 5: Running setup wizard ──
-echo.
-echo  The setup wizard will configure the monitor for your location.
-echo  You can skip this now and run it later with: node setup.js
-echo.
-set /p RUNSETUP="  Run setup wizard now? (Y/n): "
-if /i "!RUNSETUP!"=="n" goto :SKIPSETUP
-if /i "!RUNSETUP!"=="no" goto :SKIPSETUP
-
-call node setup.js
-goto :AFTERSETUP
-
-:SKIPSETUP
-echo.
-echo  Skipped. Run "node setup.js" when you're ready.
-
-:AFTERSETUP
 
 echo.
 echo  ========================================================
-echo   INSTALLATION COMPLETE
+echo   INSTALLATION COMPLETE!
 echo  ========================================================
 echo.
-echo  To start the app (development mode):
-echo    cd app
-echo    npx vite --host
-echo    Then open http://localhost:5173
+echo  QUICK START:
+echo    Double-click start.bat to launch the app
+echo    Or run: cd app ^& npx vite --host
 echo.
-echo  To start the app (production build):
-echo    npx http-server dist -p 8080 -a 0.0.0.0 -c-1
-echo    Then open http://localhost:8080
+echo  FIRST TIME SETUP:
+echo    Open http://localhost:5173 in your browser
+echo    The app will guide you through setup
 echo.
-echo  To run a threat scan:
-echo    node monitor/index.js
+echo  OPTIONAL - Daily threat scans:
+echo    Run: node monitor\index.js
 echo.
-echo  To schedule daily scans (6:00 AM):
-echo    schtasks /create /tn "BugoutThreatMonitor" /tr "%CD%\monitor\run-monitor.bat" /sc daily /st 06:00 /f
-echo.
-echo  To connect Claude Code via MCP:
-echo    Add to your Claude settings:
-echo    {
-echo      "mcpServers": {
-echo        "bugout-monitor": {
-echo          "command": "node",
-echo          "args": ["%CD%\mcp-server\index.js"]
-echo        }
-echo      }
-echo    }
+echo  OPTIONAL - Claude Code MCP integration:
+echo    See README.md for setup instructions
 echo.
 echo  Documentation: https://github.com/turfptax/bugout-monitor
 echo.
