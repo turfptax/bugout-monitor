@@ -6,6 +6,8 @@ import PlanTab from './components/plan/PlanTab';
 import EquipmentTab from './components/equipment/EquipmentTab';
 import SettingsTab from './components/settings/SettingsTab';
 import SetupWizard from './components/settings/SetupWizard';
+import ChatFAB from './components/chat/ChatFAB';
+import ChatPanel from './components/chat/ChatPanel';
 import { useSettingsStore } from './store/useSettingsStore';
 
 export default function App() {
@@ -23,6 +25,8 @@ export default function App() {
         </Routes>
       </main>
       <ToastContainer />
+      <ChatFAB />
+      <ChatPanel />
       {!hasOnboarded && <SetupWizard />}
     </div>
   );

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type AiProvider = 'openrouter' | 'lmstudio' | 'none';
+
 interface SettingsState {
   theme: 'dark' | 'light';
   hasCompletedOnboarding: boolean;
@@ -14,12 +16,22 @@ interface SettingsState {
     state: string;
     nearbyTargets: string[];
   };
+  aiProvider: AiProvider;
+  openrouterKey: string;
+  openrouterModel: string;
+  lmstudioUrl: string;
+  lmstudioModel: string;
   setTheme: (theme: 'dark' | 'light') => void;
   completeOnboarding: () => void;
   setApiKey: (key: string, value: string) => void;
   setLocation: (location: Partial<SettingsState['location']>) => void;
   addNearbyTarget: (target: string) => void;
   removeNearbyTarget: (index: number) => void;
+  setAiProvider: (provider: AiProvider) => void;
+  setOpenrouterKey: (key: string) => void;
+  setOpenrouterModel: (model: string) => void;
+  setLmstudioUrl: (url: string) => void;
+  setLmstudioModel: (model: string) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -33,6 +45,11 @@ export const useSettingsStore = create<SettingsState>()(
         state: '',
         nearbyTargets: [],
       },
+      aiProvider: 'none',
+      openrouterKey: '',
+      openrouterModel: 'google/gemini-2.0-flash-001',
+      lmstudioUrl: 'http://localhost:1234',
+      lmstudioModel: '',
 
       setTheme: (theme) => {
         set({ theme });
@@ -62,6 +79,12 @@ export const useSettingsStore = create<SettingsState>()(
             nearbyTargets: s.location.nearbyTargets.filter((_, i) => i !== index),
           },
         })),
+
+      setAiProvider: (provider) => set({ aiProvider: provider }),
+      setOpenrouterKey: (key) => set({ openrouterKey: key }),
+      setOpenrouterModel: (model) => set({ openrouterModel: model }),
+      setLmstudioUrl: (url) => set({ lmstudioUrl: url }),
+      setLmstudioModel: (model) => set({ lmstudioModel: model }),
     }),
     { name: 'bugout-settings' }
   )

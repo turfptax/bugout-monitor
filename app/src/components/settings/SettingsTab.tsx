@@ -1,6 +1,7 @@
 import { useSettingsStore } from '../../store/useSettingsStore';
 import ApiKeyCard from './ApiKeyCard';
 import LocationCard from './LocationCard';
+import AiProviderCard from './AiProviderCard';
 
 export default function SettingsTab() {
   const theme = useSettingsStore((s) => s.theme);
@@ -13,6 +14,9 @@ export default function SettingsTab() {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* AI Assistant — most prominent */}
+        <AiProviderCard />
+
         {/* Theme */}
         <div className="bg-surface border border-border rounded-md p-4">
           <h4 className="text-sm font-semibold text-text-primary mb-3">Appearance</h4>
