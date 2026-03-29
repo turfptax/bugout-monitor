@@ -116,6 +116,43 @@ export function buildChatSystemPrompt(): string {
     parts.push('EQUIPMENT: The user has not logged any equipment yet. They need to start building their kit from scratch.');
   }
 
+  // Threat-based gear prioritization
+  if (threat.data) {
+    const a = threat.data.assessment;
+    const priorities: string[] = [];
+
+    if (a.nuclear.level >= 4) {
+      priorities.push('- NUCLEAR (level ' + a.nuclear.level + '): Geiger counter, Faraday bags, KI (potassium iodide) tablets, N95 masks, plastic sheeting + duct tape for sealing rooms');
+    }
+    if (a.solar.level >= 4) {
+      priorities.push('- SOLAR/EMP (level ' + a.solar.level + '): Solar panels, power banks, Faraday protection for electronics, hand-crank radio, cash (ATMs may be down)');
+    }
+    if (a.weather.level >= 4) {
+      priorities.push('- WEATHER (level ' + a.weather.level + '): Emergency shelter/tarp, weather radio, first aid kit, water storage containers');
+    }
+    if (a.overall.level >= 5) {
+      priorities.push('- OVERALL READINESS (level ' + a.overall.level + '): Focus on immediate readiness — 72hr food supply, water (1 gal/person/day), go-bags packed and staged');
+    }
+
+    if (priorities.length > 0) {
+      parts.push(
+        'CURRENT THREAT-BASED PRIORITIES:\n' +
+        'Based on current threat levels, prioritize recommending the following gear:\n' +
+        priorities.join('\n')
+      );
+    }
+  }
+
+  // Equipment status clarification
+  parts.push(
+    'EQUIPMENT STATUS:\n' +
+    '- "have" = user physically owns this item and has it in their possession\n' +
+    '- "wanted" = user wants to buy this but does NOT own it yet\n' +
+    '- "ordered" = user has purchased but hasn\'t received yet\n' +
+    'When suggesting new items, ALWAYS use status "wanted". NEVER mark AI-suggested items as "have".\n' +
+    'Only items the user explicitly says they own should be "have".'
+  );
+
   parts.push(
     'IMPORTANT: You have access to tools that let you READ and MODIFY the user\'s bugout data directly. ' +
     'USE THEM. When the user asks you to add equipment, check threats, analyze gaps, or update rally points — ' +

@@ -6,6 +6,7 @@ import DiamondIndex from './DiamondIndex';
 import OSINTPanel from './OSINTPanel';
 import LiveScanPanel from './LiveScanPanel';
 import MethodologyPanel from './MethodologyPanel';
+import AlertBanner from './AlertBanner';
 
 export default function DashboardTab() {
   const { data, loading, error, fetchData } = useThreatStore();
@@ -76,6 +77,7 @@ export default function DashboardTab() {
             </div>
           </div>
 
+          <AlertBanner />
           <ThreatHero overall={assessment.overall} />
           <ThreatCardGrid assessment={assessment} />
           {assessment.diamond && <DiamondIndex diamond={assessment.diamond} />}
