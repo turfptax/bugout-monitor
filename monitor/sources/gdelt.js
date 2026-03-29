@@ -18,38 +18,38 @@ const QUERIES = [
   {
     id: 'nuclear_threat',
     label: 'Nuclear Threat',
-    query: '"nuclear war" OR "nuclear strike" OR "nuclear attack" OR "ICBM launch" OR "nuclear escalation" OR "strategic nuclear"',
+    query: '("nuclear war" OR "nuclear strike" OR "nuclear attack" OR "ICBM launch" OR "nuclear escalation")',
     timespan: '7d',
   },
   {
     id: 'military_escalation',
     label: 'Military Escalation',
-    query: '"military mobilization" OR "DEFCON" OR "strategic command" OR "nuclear readiness" OR "B-52 deployment" OR "SSBN deployment" OR "nuclear submarine"',
+    query: '("military mobilization" OR "DEFCON" OR "strategic command" OR "nuclear readiness" OR "nuclear submarine")',
     timespan: '7d',
   },
   {
     id: 'civil_unrest_us',
     label: 'US Civil Unrest',
-    query: '("civil unrest" OR "martial law" OR "national guard deployed" OR "state of emergency") ("United States" OR "US" OR "America")',
+    query: '("civil unrest" OR "martial law" OR "national guard deployed" OR "state of emergency")',
     timespan: '7d',
   },
 ];
 
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
 export async function fetchGDELT() {
   try {
-    const results = await Promise.allSettled(
-      QUERIES.map(q => fetchGDELTQuery(q))
-    );
-
+    // Run queries SEQUENTIALLY with 6-second delays — GDELT rate-limits to 1 req per 5 seconds
     const queryResults = {};
     const errors = [];
 
     for (let i = 0; i < QUERIES.length; i++) {
       const q = QUERIES[i];
-      if (results[i].status === 'fulfilled') {
-        queryResults[q.id] = results[i].value;
-      } else {
-        errors.push(`${q.id}: ${results[i].reason?.message}`);
+      if (i > 0) await sleep(12000); // Wait 12s between requests (GDELT rate limit is strict)
+      try {
+        queryResults[q.id] = await fetchGDELTQuery(q);
+      } catch (err) {
+        errors.push(`${q.id}: ${err.message}`);
         queryResults[q.id] = { articleCount: 0, articles: [], tone: 0 };
       }
     }
@@ -120,7 +120,18 @@ async function fetchGDELTQuery(queryDef) {
     throw new Error(`GDELT returned ${res.status}`);
   }
 
-  const data = await res.json();
+  // GDELT returns plain text errors (rate limits, bad queries) instead of JSON
+  const text = await res.text();
+  if (text.startsWith('Please limit') || text.startsWith('Queries containing')) {
+    throw new Error(`GDELT rate limit or query error: ${text.slice(0, 100)}`);
+  }
+
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error(`GDELT returned non-JSON: ${text.slice(0, 100)}`);
+  }
   const articles = (data.articles || []).map(a => ({
     title: a.title?.slice(0, 150),
     url: a.url,
