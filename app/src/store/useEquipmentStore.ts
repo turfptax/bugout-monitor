@@ -1,3 +1,4 @@
+import { uuid } from '../lib/uuid';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { EquipmentItem } from '../types/equipment';
@@ -21,7 +22,7 @@ export const useEquipmentStore = create<EquipmentState>()(
         const newItem: EquipmentItem = {
           ...item,
           status: item.status || 'have',
-          id: crypto.randomUUID(),
+          id: uuid(),
           added: new Date().toISOString(),
         };
         set((s) => ({ items: [...s.items, newItem] }));
@@ -50,7 +51,7 @@ export const useEquipmentStore = create<EquipmentState>()(
             .filter(i => !existing.has(`${i.name}|${i.category}`.toLowerCase()))
             .map(i => ({
               ...i,
-              id: i.id || crypto.randomUUID(),
+              id: i.id || uuid(),
               status: i.status || 'have',
               added: i.added || new Date().toISOString(),
             }));

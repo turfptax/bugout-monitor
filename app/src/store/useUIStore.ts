@@ -1,3 +1,4 @@
+import { uuid } from '../lib/uuid';
 import { create } from 'zustand';
 
 export interface Toast {
@@ -19,7 +20,7 @@ export const useUIStore = create<UIState>((set) => ({
   helpMode: false,
 
   showToast: (type, message) => {
-    const id = crypto.randomUUID();
+    const id = uuid();
     set((s) => ({ toasts: [...s.toasts, { id, type, message }] }));
     setTimeout(() => {
       set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) }));

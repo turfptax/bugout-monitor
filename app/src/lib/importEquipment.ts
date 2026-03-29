@@ -1,3 +1,4 @@
+import { uuid } from './uuid';
 import type { EquipmentItem } from '../types/equipment';
 import { EQUIPMENT_CATEGORIES } from '../types/equipment';
 
@@ -42,7 +43,7 @@ export function parseCSV(text: string): EquipmentItem[] {
     const category = matchCategory(rawCategory);
 
     items.push({
-      id: crypto.randomUUID(),
+      id: uuid(),
       name,
       qty,
       category,
@@ -184,7 +185,7 @@ export function parseJSON(text: string): EquipmentItem[] {
   }
 
   return arr.map((item: Record<string, string>) => ({
-    id: item.id || crypto.randomUUID(),
+    id: item.id || uuid(),
     name: item.name || 'Unknown Item',
     qty: String(item.qty || item.quantity || '1'),
     category: matchCategory(item.category || item.type || ''),

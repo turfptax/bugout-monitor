@@ -1,3 +1,4 @@
+import { uuid } from '../../lib/uuid';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useChatStore, type Message } from '../../store/useChatStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
@@ -83,7 +84,7 @@ export default function ChatTab() {
 
   const confirmSave = () => {
     const convo: SavedConversation = {
-      id: crypto.randomUUID(),
+      id: uuid(),
       title: saveTitle || 'Untitled',
       messages: [...messages],
       savedAt: new Date().toISOString(),

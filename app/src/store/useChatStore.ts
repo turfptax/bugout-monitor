@@ -1,3 +1,4 @@
+import { uuid } from '../lib/uuid';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { sendChatMessage, type AiClientConfig, type ChatMessage, type ToolUseEvent } from '../lib/aiClient';
@@ -69,7 +70,7 @@ export const useChatStore = create<ChatState>()(
 
         // Add user message
         const userMsg: Message = {
-          id: crypto.randomUUID(),
+          id: uuid(),
           role: 'user',
           content,
           timestamp: new Date().toISOString(),
@@ -99,7 +100,7 @@ export const useChatStore = create<ChatState>()(
 
         // Create placeholder assistant message
         const assistantMsg: Message = {
-          id: crypto.randomUUID(),
+          id: uuid(),
           role: 'assistant',
           content: '',
           timestamp: new Date().toISOString(),
@@ -126,7 +127,7 @@ export const useChatStore = create<ChatState>()(
               });
               // Add a tool-use message to show what happened
               const toolMsg: Message = {
-                id: crypto.randomUUID(),
+                id: uuid(),
                 role: 'tool-use',
                 content: `**🔧 ${formatToolName(toolEvent.name)}**${Object.keys(toolEvent.args).length > 0 ? '\n' + formatToolArgs(toolEvent.args) : ''}`,
                 timestamp: new Date().toISOString(),
