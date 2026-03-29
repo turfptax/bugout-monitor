@@ -14,6 +14,7 @@ export default function NavBar() {
     { to: '/', label: 'Dashboard', icon: '\u2302' },
     { to: '/plan', label: 'My Plan', icon: '\uD83D\uDCCB' },
     { to: '/equipment', label: 'Equipment', icon: '\uD83C\uDF92' },
+    { to: '/ai', label: 'AI Chat', icon: '\uD83E\uDD16' },
     { to: '/settings', label: 'Settings', icon: '\u2699\uFE0F' },
   ];
 

@@ -5,6 +5,7 @@ import DashboardTab from './components/dashboard/DashboardTab';
 import PlanTab from './components/plan/PlanTab';
 import EquipmentTab from './components/equipment/EquipmentTab';
 import SettingsTab from './components/settings/SettingsTab';
+import ChatTab from './components/chat/ChatTab';
 import SetupWizard from './components/settings/SetupWizard';
 import ChatFAB from './components/chat/ChatFAB';
 import ChatPanel from './components/chat/ChatPanel';
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/" element={<DashboardTab />} />
           <Route path="/plan" element={<PlanTab />} />
           <Route path="/equipment" element={<EquipmentTab />} />
+          <Route path="/ai" element={<ChatTab />} />
           <Route path="/settings" element={<SettingsTab />} />
         </Routes>
       </main>
