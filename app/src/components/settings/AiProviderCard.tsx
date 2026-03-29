@@ -130,6 +130,31 @@ export default function AiProviderCard() {
       {/* OpenRouter config */}
       {aiProvider === 'openrouter' && (
         <div className="space-y-3 animate-fade-in">
+          {!openrouterKey && (
+            <div className="bg-accent/5 border border-accent/20 rounded-lg p-3 text-xs text-text-dim leading-relaxed">
+              <p className="font-semibold text-accent mb-2">🚀 Get Started with OpenRouter</p>
+              <ol className="list-decimal list-inside space-y-1.5">
+                <li>
+                  <a href="https://openrouter.ai/auth/signup" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline font-medium">
+                    Create a free account at OpenRouter →
+                  </a>
+                </li>
+                <li>
+                  Go to{' '}
+                  <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                    openrouter.ai/keys
+                  </a>
+                  {' '}and click "Create Key"
+                </li>
+                <li>Copy the key (starts with <code className="text-accent/80 bg-surface-2 px-1 rounded">sk-or-...</code>) and paste below</li>
+                <li>Add credits — $5 lasts a long time with Flash models</li>
+              </ol>
+              <p className="mt-2 text-[10px] opacity-70">
+                OpenRouter gives you access to 100+ AI models (Gemini, Claude, GPT, Llama) through one API key.
+                Recommended for most users — no local hardware needed.
+              </p>
+            </div>
+          )}
           <div>
             <label className="text-xs text-text-dim block mb-1">API Key</label>
             <input
@@ -141,9 +166,8 @@ export default function AiProviderCard() {
                 placeholder:text-text-dim/40 outline-none focus:border-accent/50 transition-colors"
             />
             <p className="text-[10px] text-text-dim mt-1">
-              Get a key at{' '}
               <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
-                openrouter.ai/keys
+                Manage keys at openrouter.ai/keys →
               </a>
             </p>
           </div>
@@ -253,14 +277,33 @@ export default function AiProviderCard() {
           )}
 
           <div className="bg-surface-2 border border-border rounded p-3 text-[11px] text-text-dim leading-relaxed">
-            <p className="font-semibold text-text-primary mb-1.5">LM Studio Setup:</p>
-            <ol className="list-decimal list-inside space-y-1">
-              <li>Open LM Studio and <span className="text-accent">load a model</span></li>
-              <li>Click the <span className="text-accent">&lt;/&gt; Local Server</span> tab (left sidebar)</li>
+            <p className="font-semibold text-text-primary mb-1.5">🖥️ LM Studio Setup</p>
+            <p className="mb-2">
+              LM Studio runs AI models <strong className="text-text-primary">locally on your computer</strong> — no internet needed, completely private.
+              Perfect for offline disaster scenarios.
+            </p>
+            <p className="mb-2">
+              <a href="https://lmstudio.ai/" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline font-semibold">
+                📥 Download LM Studio (free) →
+              </a>
+              <span className="text-[10px] opacity-70 ml-1">Available for Windows, Mac, and Linux</span>
+            </p>
+            <ol className="list-decimal list-inside space-y-1.5">
+              <li>Install and open LM Studio</li>
+              <li>Search for and download a model (recommended: <span className="text-accent">Qwen 2.5 7B</span> or <span className="text-accent">Llama 3.1 8B</span>)</li>
+              <li>Go to the <span className="text-accent">Developer</span> tab (left sidebar)</li>
               <li>Click <span className="text-threat-green font-semibold">Start Server</span></li>
-              <li>In server settings, enable <span className="text-accent">"Enable CORS"</span> (required for browser access)</li>
-              <li>Click "Detect Models" below to verify</li>
+              <li>In the status bar, verify it shows <span className="text-threat-green">Server running on port 1234</span></li>
+              <li>
+                <strong className="text-threat-yellow">Important:</strong> In server settings, enable{' '}
+                <span className="text-accent">"Enable CORS"</span> — without this, the browser can't connect
+              </li>
+              <li>Use "Scan Network" above to find the server, or "Detect Models" below to verify</li>
             </ol>
+            <p className="mt-2 text-[10px] opacity-70">
+              Tip: If running LM Studio on a different computer on your network, use "Scan Network" to find it automatically.
+              Make sure the server is set to listen on <code className="bg-surface px-1 rounded">0.0.0.0</code> (not just localhost) for network access.
+            </p>
           </div>
           <div>
             <label className="text-xs text-text-dim block mb-1">Model</label>

@@ -234,9 +234,12 @@ function BackupRestoreCard() {
   return (
     <div className="bg-surface border border-border rounded-md p-4 md:col-span-2">
       <h4 className="text-sm font-semibold text-text-primary mb-1">💾 Backup & Restore</h4>
-      <p className="text-xs text-text-dim mb-4">
+      <p className="text-xs text-text-dim mb-2">
         All your data is stored locally in this browser. Export a backup file to save your plan, equipment, routes, and settings.
         Restore from a backup after reinstalling or on a new device.
+      </p>
+      <p className="text-[0.68rem] text-threat-yellow mb-4 flex items-center gap-1.5">
+        <span>⚠️</span> Backup files include your API keys (OpenRouter, NASA, etc.). Keep them private — don't commit to git or share publicly.
       </p>
 
       <div className="flex flex-wrap gap-3 mb-4">

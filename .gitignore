@@ -5,10 +5,14 @@ user-config.json
 .env
 monitor/.env
 
+# Backup files (may contain API keys)
+bugout-backup-*.json
+
 # Runtime
 monitor/logs/
 node_modules/
 dist/
+app/dist/
 
 # Test files
 test-setup.js
