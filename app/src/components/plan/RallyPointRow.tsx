@@ -7,11 +7,11 @@ interface Props {
   onChange: (value: string) => void;
 }
 
-export default function RallyPointRow({ label, value, placeholder, onChange }: Props) {
+export default function RallyPointRow({ label, value = '', placeholder, onChange }: Props) {
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(value);
+  const [draft, setDraft] = useState(value || '');
 
-  const hasValue = value.trim().length > 0;
+  const hasValue = (value || '').trim().length > 0;
 
   const commit = () => {
     onChange(draft);
@@ -21,7 +21,7 @@ export default function RallyPointRow({ label, value, placeholder, onChange }: P
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') commit();
     if (e.key === 'Escape') {
-      setDraft(value);
+      setDraft(value || '');
       setEditing(false);
     }
   };
@@ -50,7 +50,7 @@ export default function RallyPointRow({ label, value, placeholder, onChange }: P
   return (
     <tr
       onClick={() => {
-        setDraft(value);
+        setDraft(value || '');
         setEditing(true);
       }}
       className="cursor-pointer hover:bg-accent/[0.04] transition-colors"
