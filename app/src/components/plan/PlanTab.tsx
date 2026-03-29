@@ -441,10 +441,13 @@ export default function PlanTab() {
   }, []);
 
   // ── Derived data ──
-  const itemNames = useMemo(() => equipmentItems.map((i) => i.name.toLowerCase()), [equipmentItems]);
+  // IMPORTANT: Only items with status "have" count as actually owned.
+  // "wanted" and "ordered" items are NOT in the user's possession yet.
   const haveItems = useMemo(() => equipmentItems.filter((i) => i.status === 'have' || !i.status), [equipmentItems]);
   const wantedItems = useMemo(() => equipmentItems.filter((i) => i.status === 'wanted'), [equipmentItems]);
   const orderedItems = useMemo(() => equipmentItems.filter((i) => i.status === 'ordered'), [equipmentItems]);
+  // itemNames only includes OWNED items — used for gear checks in scenarios
+  const itemNames = useMemo(() => haveItems.map((i) => i.name.toLowerCase()), [haveItems]);
   const byCategory = useMemo(() => {
     const m: Record<string, EquipmentItem[]> = {};
     equipmentItems.forEach((i) => {
@@ -453,8 +456,10 @@ export default function PlanTab() {
     });
     return m;
   }, [equipmentItems]);
-  const coveredCategories = useMemo(() => new Set(equipmentItems.map((i) => i.category)), [equipmentItems]);
-  const gaps = useMemo(() => computeGaps(equipmentItems), [equipmentItems]);
+  // Only count categories where user actually HAS items
+  const coveredCategories = useMemo(() => new Set(haveItems.map((i) => i.category)), [haveItems]);
+  // Gap analysis only counts owned items
+  const gaps = useMemo(() => computeGaps(haveItems), [haveItems]);
   const totalGaps = useMemo(() => gaps.reduce((sum, g) => sum + g.missing.length, 0), [gaps]);
 
   // Shelter timeline estimate
@@ -516,10 +521,11 @@ export default function PlanTab() {
     return keywords.some((kw) => itemNames.some((n) => n.includes(kw.toLowerCase())));
   };
 
-  // Helper: count matching items + representative qty
+  // Helper: count matching OWNED items + representative qty
   const inventoryMatch = (keywords: string[]): { found: boolean; label: string } => {
     if (keywords.length === 0) return { found: false, label: '' };
-    const matching = equipmentItems.filter((item) =>
+    // Only check items with status "have" — wanted/ordered don't count as owned
+    const matching = haveItems.filter((item) =>
       keywords.some((kw) => item.name.toLowerCase().includes(kw.toLowerCase()))
     );
     if (matching.length === 0) return { found: false, label: 'not in inventory' };
