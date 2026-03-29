@@ -3,6 +3,7 @@ import NavBar from './components/layout/NavBar';
 import ToastContainer from './components/layout/ToastContainer';
 import DashboardTab from './components/dashboard/DashboardTab';
 import PlanTab from './components/plan/PlanTab';
+import PlanErrorBoundary from './components/plan/PlanErrorBoundary';
 import EquipmentTab from './components/equipment/EquipmentTab';
 import SettingsTab from './components/settings/SettingsTab';
 import ChatTab from './components/chat/ChatTab';
@@ -20,7 +21,7 @@ export default function App() {
       <main className="pt-14">
         <Routes>
           <Route path="/" element={<DashboardTab />} />
-          <Route path="/plan" element={<PlanTab />} />
+          <Route path="/plan" element={<PlanErrorBoundary><PlanTab /></PlanErrorBoundary>} />
           <Route path="/equipment" element={<EquipmentTab />} />
           <Route path="/ai" element={<ChatTab />} />
           <Route path="/settings" element={<SettingsTab />} />

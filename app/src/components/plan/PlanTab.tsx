@@ -380,12 +380,16 @@ export default function PlanTab() {
   const [routes, setRoutes] = useState<Record<string, RouteData>>(() =>
     readJson('bugout-routes', {})
   );
-  const [comms, setComms] = useState<CommsData>(() =>
-    readJson('bugout-comms', DEFAULT_COMMS)
-  );
-  const [shelter, setShelter] = useState<ShelterData>(() =>
-    readJson('bugout-shelter', DEFAULT_SHELTER)
-  );
+  const [comms, setComms] = useState<CommsData>(() => {
+    const raw = readJson('bugout-comms', DEFAULT_COMMS);
+    // Ensure codeWords is always an object
+    return { ...DEFAULT_COMMS, ...raw, codeWords: { ...DEFAULT_COMMS.codeWords, ...(raw.codeWords || {}) } };
+  });
+  const [shelter, setShelter] = useState<ShelterData>(() => {
+    const raw = readJson('bugout-shelter', DEFAULT_SHELTER);
+    // Ensure tripwires is always an array
+    return { ...DEFAULT_SHELTER, ...raw, tripwires: Array.isArray(raw.tripwires) ? raw.tripwires : [] };
+  });
   const [contacts, setContacts] = useState<ContactsData>(() =>
     readJson('bugout-contacts', { ice1: '', ice2: '', neighbor: '', outOfState: '' })
   );

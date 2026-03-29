@@ -16,12 +16,32 @@ function mapScanSourceData(raw: Record<string, unknown>): SourceData {
   const nwsAlerts = raw.nwsAlerts as Record<string, unknown> | undefined;
   const gdelt = raw.gdelt as Record<string, unknown> | undefined;
 
+  // Derive a Kp description from the storm level
+  const kpDescription = swpcKp
+    ? (swpcKp.stormLevel as string) === 'Quiet'
+      ? 'Quiet conditions'
+      : `Geomagnetic activity: ${swpcKp.stormLevel as string}`
+    : '';
+
+  // GDELT live scan returns flat fields: { nuclearArticles, militaryArticles, unrestArticles, avgTone }
+  // The OSINT panel expects nested: { nuclear: { articleCount }, military: { articleCount }, ... }
+  const nuclearArticles = (gdelt?.nuclearArticles as number) ?? 0;
+  const militaryArticles = (gdelt?.militaryArticles as number) ?? 0;
+  const unrestArticles = (gdelt?.unrestArticles as number) ?? 0;
+  const avgTone = (gdelt?.avgTone as number) ?? 0;
+
+  // Count severe/extreme alerts for statewide count
+  const alertsList = (nwsAlerts?.alerts as Array<{ event: string; severity: string; headline: string }>) ?? [];
+  const statewideSevereCount = alertsList.filter(
+    (a) => a.severity === 'Severe' || a.severity === 'Extreme'
+  ).length;
+
   return {
     solarData: swpcKp ? {
       status: 'OK',
       currentKp: (swpcKp.currentKp as number) ?? 0,
       maxKp24h: (swpcKp.maxKp24h as number) ?? 0,
-      kpDescription: (swpcKp.kpDescription as string) ?? '',
+      kpDescription,
       stormLevel: (swpcKp.stormLevel as string) ?? 'Unknown',
     } : undefined,
     swpcAlertsData: swpcAlerts ? {
@@ -46,10 +66,10 @@ function mapScanSourceData(raw: Record<string, unknown>): SourceData {
       status: 'OK',
       count: (nwsAlerts.count as number) ?? 0,
       highestSeverity: (nwsAlerts.highestSeverity as string) ?? 'None',
-      statewideSevereCount: (nwsAlerts.statewideSevereCount as number) ?? 0,
+      statewideSevereCount,
       hasTornadoWarning: (nwsAlerts.hasTornadoWarning as boolean) ?? false,
       hasTornadoWatch: (nwsAlerts.hasTornadoWatch as boolean) ?? false,
-      alerts: (nwsAlerts.alerts as Array<{ event: string; severity: string; headline: string }>) ?? [],
+      alerts: alertsList,
     } : undefined,
     nuclearData: {
       status: 'OK',
@@ -59,12 +79,12 @@ function mapScanSourceData(raw: Record<string, unknown>): SourceData {
     },
     gdeltData: gdelt ? {
       status: 'OK',
-      totalArticleCount: (gdelt.totalArticleCount as number) ?? 0,
-      nuclear: gdelt.nuclear as { articleCount: number } | undefined,
-      military: gdelt.military as { articleCount: number } | undefined,
-      unrest: gdelt.unrest as { articleCount: number } | undefined,
-      avgNuclearMilitaryTone: (gdelt.avgNuclearMilitaryTone as number) ?? 0,
-      topArticles: (gdelt.topArticles as Array<{ title: string; queryCategory: string; tone: number }>) ?? [],
+      totalArticleCount: nuclearArticles + militaryArticles + unrestArticles,
+      nuclear: { articleCount: nuclearArticles },
+      military: { articleCount: militaryArticles },
+      unrest: { articleCount: unrestArticles },
+      avgNuclearMilitaryTone: avgTone,
+      topArticles: [],
     } : undefined,
   };
 }

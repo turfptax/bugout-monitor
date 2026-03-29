@@ -3,28 +3,25 @@ REM ── Always run from the directory this script lives in ──
 cd /d "%~dp0"
 
 echo.
-echo  Bugout Monitor
-echo  --------------
+echo  ========================================================
+echo   BUGOUT MONITOR - Server
+echo  ========================================================
 echo.
 
-REM Check if dist folder exists (production build)
-if exist "dist\index.html" (
-    echo  [Production Mode] Serving built app on port 8080
+REM ── Check if dist/ exists ──
+if not exist "dist\index.html" (
+    echo  [ERROR] No production build found in dist\
     echo.
-    echo  Local:   http://localhost:8080
-    echo  Network: http://%COMPUTERNAME%:8080
+    echo  Run install.bat first to build the app.
     echo.
-    echo  Press Ctrl+C to stop.
-    echo.
-    call npx http-server dist -p 8080 -a 0.0.0.0 -c-1 --cors
-) else (
-    echo  [Dev Mode] No production build found. Starting Vite dev server...
-    echo.
-    echo  Local:   http://localhost:5173
-    echo  Network: Will be shown below
-    echo.
-    echo  Press Ctrl+C to stop.
-    echo.
-    cd /d "%~dp0app"
-    call npx vite --host 0.0.0.0 --port 5173
+    exit /b 1
 )
+
+echo  Serving from project root on port 8080
+echo.
+echo  Local:   http://localhost:8080
+echo  Network: http://%COMPUTERNAME%:8080
+echo.
+echo  Press Ctrl+C to stop.
+echo.
+call npx http-server . -p 8080 -a 0.0.0.0 -c-1 --cors
