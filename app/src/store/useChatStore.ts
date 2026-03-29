@@ -88,9 +88,13 @@ export const useChatStore = create<ChatState>()(
         ];
 
         // Include recent conversation (last 20 messages to stay within context)
+        // Only include user and assistant messages — skip 'tool-use' display messages
+        // which are NOT a valid OpenAI API role and cause 400 errors
         const recentMessages = get().messages.slice(-20);
         for (const msg of recentMessages) {
-          history.push({ role: msg.role, content: msg.content });
+          if (msg.role === 'user' || msg.role === 'assistant') {
+            history.push({ role: msg.role, content: msg.content });
+          }
         }
 
         // Create placeholder assistant message
