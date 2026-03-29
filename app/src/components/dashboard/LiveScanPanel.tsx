@@ -2,6 +2,72 @@ import { useState } from 'react';
 import { runLiveScan, type ScanProgress, type ScanResult } from '../../lib/liveScan';
 import { useThreatStore } from '../../store/useThreatStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
+import type { SourceData } from '../../types/threat';
+
+/**
+ * Map live scan sourceData keys to the format the OSINT panel expects.
+ * Scan uses: swpcKp, swpcAlerts, donki, nwsAlerts, gdelt
+ * OSINT expects: solarData, swpcAlertsData, donkiData, weatherData, gdeltData, etc.
+ */
+function mapScanSourceData(raw: Record<string, unknown>): SourceData {
+  const swpcKp = raw.swpcKp as Record<string, unknown> | undefined;
+  const swpcAlerts = raw.swpcAlerts as Record<string, unknown> | undefined;
+  const donki = raw.donki as Record<string, unknown> | undefined;
+  const nwsAlerts = raw.nwsAlerts as Record<string, unknown> | undefined;
+  const gdelt = raw.gdelt as Record<string, unknown> | undefined;
+
+  return {
+    solarData: swpcKp ? {
+      status: 'OK',
+      currentKp: (swpcKp.currentKp as number) ?? 0,
+      maxKp24h: (swpcKp.maxKp24h as number) ?? 0,
+      kpDescription: (swpcKp.kpDescription as string) ?? '',
+      stormLevel: (swpcKp.stormLevel as string) ?? 'Unknown',
+    } : undefined,
+    swpcAlertsData: swpcAlerts ? {
+      status: 'OK',
+      alertCount: (swpcAlerts.alertCount as number) ?? 0,
+      highestGeomagScale: (swpcAlerts.highestGeomagScale as number) ?? 0,
+      highestRadioBlackout: (swpcAlerts.highestRadioBlackout as number) ?? 0,
+      hasWarning: (swpcAlerts.hasWarning as boolean) ?? false,
+      hasWatch: (swpcAlerts.hasWatch as boolean) ?? false,
+      forecast: swpcAlerts.forecast as { mFlareProb: number; xFlareProb: number } | undefined,
+    } : undefined,
+    donkiData: donki ? {
+      status: 'OK',
+      cmeCount: (donki.cmeCount as number) ?? 0,
+      flareCount: (donki.flareCount as number) ?? 0,
+      stormCount: (donki.stormCount as number) ?? 0,
+      hasEarthDirectedCME: (donki.hasEarthDirectedCME as boolean) ?? false,
+      hasXFlare: (donki.hasXFlare as boolean) ?? false,
+      maxStormKp: (donki.maxStormKp as number) ?? 0,
+    } : undefined,
+    weatherData: nwsAlerts ? {
+      status: 'OK',
+      count: (nwsAlerts.count as number) ?? 0,
+      highestSeverity: (nwsAlerts.highestSeverity as string) ?? 'None',
+      statewideSevereCount: (nwsAlerts.statewideSevereCount as number) ?? 0,
+      hasTornadoWarning: (nwsAlerts.hasTornadoWarning as boolean) ?? false,
+      hasTornadoWatch: (nwsAlerts.hasTornadoWatch as boolean) ?? false,
+      alerts: (nwsAlerts.alerts as Array<{ event: string; severity: string; headline: string }>) ?? [],
+    } : undefined,
+    nuclearData: {
+      status: 'OK',
+      headlineCount: 0,
+      doomsdayClock: { value: '89 seconds to midnight', lastUpdated: 'January 2025' },
+      headlines: [],
+    },
+    gdeltData: gdelt ? {
+      status: 'OK',
+      totalArticleCount: (gdelt.totalArticleCount as number) ?? 0,
+      nuclear: gdelt.nuclear as { articleCount: number } | undefined,
+      military: gdelt.military as { articleCount: number } | undefined,
+      unrest: gdelt.unrest as { articleCount: number } | undefined,
+      avgNuclearMilitaryTone: (gdelt.avgNuclearMilitaryTone as number) ?? 0,
+      topArticles: (gdelt.topArticles as Array<{ title: string; queryCategory: string; tone: number }>) ?? [],
+    } : undefined,
+  };
+}
 
 export default function LiveScanPanel() {
   const [scanning, setScanning] = useState(false);
@@ -22,18 +88,18 @@ export default function LiveScanPanel() {
       useThreatStore.setState({
         data: {
           assessment: result.assessment,
-          sourceData: result.sourceData as Record<string, Record<string, unknown>>,
+          sourceData: mapScanSourceData(result.sourceData),
           timestamp: result.timestamp,
           meta: result.meta,
         },
         lastFetched: Date.now(),
       });
 
-      // Also save to public/threat-data.json for persistence
+      // Also save to localStorage for persistence
       try {
         const saveData = {
           assessment: result.assessment,
-          sourceData: result.sourceData,
+          sourceData: mapScanSourceData(result.sourceData),
           timestamp: result.timestamp,
           meta: result.meta,
         };
