@@ -124,7 +124,7 @@ export default function ChatTab() {
   const providerLabel = aiProvider === 'openrouter' ? 'OpenRouter' : aiProvider === 'lmstudio' ? 'LM Studio' : null;
 
   return (
-    <div className="h-[calc(100vh-3.5rem)] flex">
+    <div className="h-[calc(100vh-3rem-72px)] md:h-[calc(100vh-3.5rem)] flex">
       {/* Sidebar — Saved Conversations */}
       <div className={`${showSaved ? 'w-72' : 'w-0'} transition-all duration-200 overflow-hidden border-r border-border bg-surface flex flex-col shrink-0`}>
         <div className="px-3 py-3 border-b border-border flex items-center justify-between shrink-0">
@@ -318,7 +318,7 @@ export default function ChatTab() {
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading || aiProvider === 'none'}
-              className="shrink-0 w-10 h-10 rounded-xl bg-accent text-bg flex items-center justify-center
+              className="shrink-0 w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl bg-accent text-bg flex items-center justify-center
                 hover:bg-accent/90 disabled:opacity-30 disabled:cursor-not-allowed
                 transition-all duration-150 cursor-pointer"
             >

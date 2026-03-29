@@ -159,7 +159,7 @@ export default function LiveScanPanel() {
         <button
           onClick={handleScan}
           disabled={scanning}
-          className={`px-4 py-1.5 rounded text-xs font-bold cursor-pointer transition-all duration-200 flex items-center gap-2
+          className={`px-4 py-1.5 min-h-[44px] rounded text-xs font-bold cursor-pointer transition-all duration-200 flex items-center gap-2
             ${scanning
               ? 'bg-accent/20 text-accent border border-accent/40 cursor-wait'
               : 'bg-accent text-bg hover:opacity-90'

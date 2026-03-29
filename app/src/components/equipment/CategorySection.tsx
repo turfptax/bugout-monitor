@@ -46,43 +46,45 @@ export default function CategorySection({ category, items, selectMode, selectedI
       </button>
 
       {isOpen && (
-        <table className="w-full border-collapse text-sm animate-fade-in">
-          <thead>
-            <tr>
-              {selectMode && (
-                <th className="bg-surface-2 text-accent text-center px-2 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-10">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm animate-fade-in">
+            <thead>
+              <tr>
+                {selectMode && (
+                  <th className="bg-surface-2 text-accent text-center px-2 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-10">
+                  </th>
+                )}
+                <th className="bg-surface-2 text-accent text-left px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold">
+                  Item
                 </th>
-              )}
-              <th className="bg-surface-2 text-accent text-left px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold">
-                Item
-              </th>
-              <th className="bg-surface-2 text-accent text-center px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-16">
-                Qty
-              </th>
-              <th className="bg-surface-2 text-accent text-center px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-24">
-                Status
-              </th>
-              <th className="bg-surface-2 text-accent text-left px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold">
-                Notes
-              </th>
-              {items.some((i) => i.added) && (
-                <th className="bg-surface-2 text-accent text-center px-2 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-10">
+                <th className="bg-surface-2 text-accent text-center px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-16">
+                  Qty
                 </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <ItemRow
-                key={item.id}
-                item={item}
-                selectMode={selectMode}
-                isSelected={selectedIds?.has(item.id) ?? false}
-                onToggleSelect={onToggleSelect}
-              />
-            ))}
-          </tbody>
-        </table>
+                <th className="bg-surface-2 text-accent text-center px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-24">
+                  Status
+                </th>
+                <th className="bg-surface-2 text-accent text-left px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold hidden sm:table-cell">
+                  Notes
+                </th>
+                {items.some((i) => i.added) && (
+                  <th className="bg-surface-2 text-accent text-center px-2 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-10">
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <ItemRow
+                  key={item.id}
+                  item={item}
+                  selectMode={selectMode}
+                  isSelected={selectedIds?.has(item.id) ?? false}
+                  onToggleSelect={onToggleSelect}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

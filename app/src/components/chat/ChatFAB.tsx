@@ -12,7 +12,7 @@ export default function ChatFAB() {
   return (
     <button
       onClick={toggleOpen}
-      className={`fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-accent text-bg
+      className={`fixed bottom-20 md:bottom-6 right-6 z-40 w-14 h-14 min-h-[44px] min-w-[44px] rounded-full bg-accent text-bg
         flex items-center justify-center shadow-lg shadow-accent/20
         hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer
         ${isLoading ? 'animate-fab-pulse' : ''}`}

@@ -59,10 +59,11 @@ export default function ItemRow({ item, selectMode, isSelected, onToggleSelect }
   };
 
   const statusBadge = (s: string) => {
+    const baseClasses = "text-[10px] px-2 py-1 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center rounded font-semibold cursor-pointer";
     switch (s) {
-      case 'wanted': return <span className="text-[10px] px-1.5 py-0.5 rounded bg-threat-yellow/15 text-threat-yellow border border-threat-yellow/30 font-semibold cursor-pointer" onClick={() => cycleStatus()} title="Click to change">🎯 WANTED</span>;
-      case 'ordered': return <span className="text-[10px] px-1.5 py-0.5 rounded bg-accent-2/15 text-accent-2 border border-accent-2/30 font-semibold cursor-pointer" onClick={() => cycleStatus()} title="Click to change">📦 ORDERED</span>;
-      default: return <span className="text-[10px] px-1.5 py-0.5 rounded bg-threat-green/15 text-threat-green border border-threat-green/30 font-semibold cursor-pointer" onClick={() => cycleStatus()} title="Click to change">✅ HAVE</span>;
+      case 'wanted': return <span className={`${baseClasses} bg-threat-yellow/15 text-threat-yellow border border-threat-yellow/30`} onClick={() => cycleStatus()} title="Click to change">🎯 WANTED</span>;
+      case 'ordered': return <span className={`${baseClasses} bg-accent-2/15 text-accent-2 border border-accent-2/30`} onClick={() => cycleStatus()} title="Click to change">📦 ORDERED</span>;
+      default: return <span className={`${baseClasses} bg-threat-green/15 text-threat-green border border-threat-green/30`} onClick={() => cycleStatus()} title="Click to change">✅ HAVE</span>;
     }
   };
 
@@ -103,7 +104,7 @@ export default function ItemRow({ item, selectMode, isSelected, onToggleSelect }
       <td className="py-1.5 px-3 border border-border w-24 text-center">
         {statusBadge(item.status || 'have')}
       </td>
-      <td className="py-1.5 px-3 border border-border">
+      <td className="py-1.5 px-3 border border-border hidden sm:table-cell">
         {renderCell('notes', item.notes)}
       </td>
       {isUserAdded && (

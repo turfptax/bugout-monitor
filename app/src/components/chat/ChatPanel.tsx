@@ -70,9 +70,9 @@ export default function ChatPanel() {
         />
       )}
 
-      {/* Panel */}
+      {/* Panel — full-screen overlay on mobile, slide-out on desktop */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-[400px] z-50 bg-bg border-l border-border
+        className={`fixed inset-0 md:inset-auto md:top-0 md:right-0 md:h-full md:w-[400px] z-50 bg-bg md:border-l border-border
           flex flex-col transition-transform duration-300 ease-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
@@ -178,7 +178,7 @@ export default function ChatPanel() {
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading || aiProvider === 'none'}
-              className="shrink-0 w-9 h-9 rounded-lg bg-accent text-bg flex items-center justify-center
+              className="shrink-0 w-11 h-11 min-h-[44px] min-w-[44px] rounded-lg bg-accent text-bg flex items-center justify-center
                 hover:bg-accent/90 disabled:opacity-30 disabled:cursor-not-allowed
                 transition-all duration-150 cursor-pointer"
             >

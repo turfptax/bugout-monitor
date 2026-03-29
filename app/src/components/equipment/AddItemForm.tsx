@@ -100,7 +100,7 @@ export default function AddItemForm() {
 
       <button
         type="submit"
-        className="px-4 py-1.5 bg-accent text-bg rounded text-sm font-semibold cursor-pointer hover:opacity-90 transition-opacity whitespace-nowrap"
+        className="px-4 py-1.5 min-h-[44px] bg-accent text-bg rounded text-sm font-semibold cursor-pointer hover:opacity-90 transition-opacity whitespace-nowrap"
       >
         + Add Item
       </button>

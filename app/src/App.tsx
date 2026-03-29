@@ -18,7 +18,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-bg text-text-primary">
       <NavBar />
-      <main className="pt-14">
+      <main className="pt-12 md:pt-14 pb-[72px] md:pb-0">
         <Routes>
           <Route path="/" element={<DashboardTab />} />
           <Route path="/plan" element={<PlanErrorBoundary><PlanTab /></PlanErrorBoundary>} />
