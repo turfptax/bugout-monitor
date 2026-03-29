@@ -93,10 +93,20 @@ export function buildChatSystemPrompt(): string {
     '- "What am I missing?" → call suggest_equipment_gaps AND get_equipment\n' +
     '- "Build me a basic comms kit" → call bulk_add_equipment with multiple items\n' +
     '- "What are the current threats?" → call get_threat_levels\n' +
-    '- "Set my home rally point to 123 Elm St" → call set_rally_point\n\n' +
-    'After using tools, summarize what you did and make recommendations. ' +
+    '- "Set my home rally point to 123 Elm St" → call set_rally_point\n' +
+    '- "What should I do next?" → call get_next_actions\n' +
+    '- "How prepared am I?" → call get_plan_status\n' +
+    '- "What\'s my nuclear plan?" → call get_scenario_plan with scenario="nuclear"\n' +
+    '- "Set up my comms" → call update_comms_plan\n' +
+    '- "We have 60 lbs of rice" → call set_shelter_plan\n' +
+    '- "Plan a route northwest" → call update_bugout_route\n\n' +
+    'FULL TOOL LIST: get_threat_levels, get_osint_summary, get_equipment, add_equipment, ' +
+    'bulk_add_equipment, remove_equipment, suggest_equipment_gaps, get_rally_points, set_rally_point, ' +
+    'get_location, get_plan_status, get_scenario_plan, update_comms_plan, get_comms_plan, ' +
+    'update_bugout_route, get_bugout_routes, set_shelter_plan, get_shelter_plan, get_next_actions\n\n' +
+    'After using tools, summarize what you did and make personalized recommendations. ' +
     'Be specific to their threat levels, location, and existing gear. ' +
-    'Identify gaps and prioritize by urgency. Use clear formatting with headers and bullet points.'
+    'Prioritize by urgency. Use clear formatting.'
   );
 
   return parts.join('\n\n');
