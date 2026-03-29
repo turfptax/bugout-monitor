@@ -86,7 +86,16 @@ export function buildChatSystemPrompt(): string {
   }
 
   parts.push(
-    'When making recommendations, be specific to their threat levels, location, and existing gear. ' +
+    'IMPORTANT: You have access to tools that let you READ and MODIFY the user\'s bugout data directly. ' +
+    'USE THEM. When the user asks you to add equipment, check threats, analyze gaps, or update rally points — ' +
+    'call the appropriate tool instead of just describing what to do. For example:\n' +
+    '- "Add a LifeStraw to my gear" → call add_equipment\n' +
+    '- "What am I missing?" → call suggest_equipment_gaps AND get_equipment\n' +
+    '- "Build me a basic comms kit" → call bulk_add_equipment with multiple items\n' +
+    '- "What are the current threats?" → call get_threat_levels\n' +
+    '- "Set my home rally point to 123 Elm St" → call set_rally_point\n\n' +
+    'After using tools, summarize what you did and make recommendations. ' +
+    'Be specific to their threat levels, location, and existing gear. ' +
     'Identify gaps and prioritize by urgency. Use clear formatting with headers and bullet points.'
   );
 

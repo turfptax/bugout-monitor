@@ -1,6 +1,18 @@
 export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
+  role: 'system' | 'user' | 'assistant' | 'tool';
+  content: string | null;
+  tool_calls?: ToolCall[];
+  tool_call_id?: string;
+  name?: string;
+}
+
+export interface ToolCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string;
+  };
 }
 
 export interface AiClientConfig {
@@ -36,10 +48,30 @@ function getModel(config: AiClientConfig): string {
   return config.lmstudioModel || 'default';
 }
 
+import { TOOL_DEFINITIONS, executeTool, type ToolCallResult } from './chatTools';
+
+export interface ToolUseEvent {
+  name: string;
+  args: Record<string, unknown>;
+  result: string;
+}
+
+/**
+ * Send a chat message with tool-use support.
+ *
+ * Flow:
+ * 1. Send messages + tool definitions to the LLM
+ * 2. If the LLM returns tool_calls, execute them locally and send results back
+ * 3. Repeat until the LLM returns a final text response (no more tool calls)
+ * 4. Stream the final text response to the UI
+ *
+ * Max 5 tool-call rounds to prevent infinite loops.
+ */
 export async function sendChatMessage(
   config: AiClientConfig,
   messages: ChatMessage[],
-  onChunk?: (text: string) => void
+  onChunk?: (text: string) => void,
+  onToolUse?: (event: ToolUseEvent) => void,
 ): Promise<string> {
   if (config.provider === 'none') {
     throw new Error('No AI provider configured. Go to Settings to set up OpenRouter or LM Studio.');
@@ -48,85 +80,127 @@ export async function sendChatMessage(
   const endpoint = getEndpoint(config);
   const headers = getHeaders(config);
   const model = getModel(config);
+  const MAX_TOOL_ROUNDS = 5;
 
-  const body = JSON.stringify({
-    model,
-    messages,
-    stream: !!onChunk,
-    max_tokens: 2048,
-    temperature: 0.7,
-  });
+  // Build the conversation with tool definitions
+  const conversation: ChatMessage[] = [...messages];
 
-  let response: Response;
-  try {
-    response = await fetch(endpoint, { method: 'POST', headers, body });
-  } catch (fetchErr) {
-    if (config.provider === 'lmstudio') {
-      throw new Error(
-        'Cannot reach LM Studio. Make sure:\n' +
-        '1. LM Studio is open with a model loaded\n' +
-        '2. The Local Server is running\n' +
-        '3. CORS is enabled in server settings\n\n' +
-        'Go to Settings → AI Assistant to configure.'
-      );
+  for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+    // Determine if this is the final round (stream) or a tool-calling round (no stream)
+    const isToolRound = round < MAX_TOOL_ROUNDS - 1;
+
+    const requestBody: Record<string, unknown> = {
+      model,
+      messages: conversation,
+      tools: TOOL_DEFINITIONS,
+      max_tokens: 2048,
+      temperature: 0.7,
+    };
+
+    // Don't stream during tool-calling rounds — we need the full response to parse tool_calls
+    // Stream only on the final text response
+    if (!isToolRound) {
+      requestBody.stream = !!onChunk;
     }
-    throw new Error('Network error — check your internet connection.');
-  }
 
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => '');
-    let errorMsg = `HTTP ${response.status}`;
+    let response: Response;
     try {
-      const parsed = JSON.parse(errorText);
-      errorMsg = parsed.error?.message || parsed.message || errorMsg;
-    } catch {
-      if (errorText) errorMsg += `: ${errorText.slice(0, 200)}`;
+      response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(requestBody),
+      });
+    } catch (fetchErr) {
+      if (config.provider === 'lmstudio') {
+        throw new Error(
+          'Cannot reach LM Studio. Make sure:\n' +
+          '1. LM Studio is open with a model loaded\n' +
+          '2. The Local Server is running\n' +
+          '3. CORS is enabled in server settings\n\n' +
+          'Go to Settings → AI Assistant to configure.'
+        );
+      }
+      throw new Error('Network error — check your internet connection.');
     }
-    throw new Error(errorMsg);
-  }
 
-  // Non-streaming
-  if (!onChunk) {
-    const json = await response.json();
-    return json.choices?.[0]?.message?.content || '';
-  }
-
-  // Streaming SSE
-  const reader = response.body?.getReader();
-  if (!reader) throw new Error('No response body for streaming');
-
-  const decoder = new TextDecoder();
-  let fullText = '';
-  let buffer = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() || '';
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed || !trimmed.startsWith('data: ')) continue;
-      const data = trimmed.slice(6);
-      if (data === '[DONE]') continue;
-
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      let errorMsg = `HTTP ${response.status}`;
       try {
-        const parsed = JSON.parse(data);
-        const delta = parsed.choices?.[0]?.delta?.content;
-        if (delta) {
-          fullText += delta;
-          onChunk(delta);
-        }
+        const parsed = JSON.parse(errorText);
+        errorMsg = parsed.error?.message || parsed.message || errorMsg;
       } catch {
-        // skip malformed SSE chunks
+        if (errorText) errorMsg += `: ${errorText.slice(0, 200)}`;
+      }
+      throw new Error(errorMsg);
+    }
+
+    // Parse the response
+    const json = await response.json();
+    const choice = json.choices?.[0];
+
+    if (!choice) throw new Error('No response from model');
+
+    const message = choice.message;
+
+    // Check if the model wants to call tools
+    if (message.tool_calls && message.tool_calls.length > 0) {
+      // Add the assistant's tool-calling message to the conversation
+      conversation.push({
+        role: 'assistant',
+        content: message.content || null,
+        tool_calls: message.tool_calls,
+      });
+
+      // Execute each tool call
+      for (const toolCall of message.tool_calls) {
+        const fnName = toolCall.function.name;
+        let fnArgs: Record<string, unknown> = {};
+        try {
+          fnArgs = JSON.parse(toolCall.function.arguments || '{}');
+        } catch {
+          fnArgs = {};
+        }
+
+        // Execute the tool
+        const result = await executeTool(fnName, fnArgs);
+
+        // Notify the UI
+        if (onToolUse) {
+          onToolUse({ name: fnName, args: fnArgs, result });
+        }
+
+        // Add the tool result to the conversation
+        conversation.push({
+          role: 'tool',
+          tool_call_id: toolCall.id,
+          name: fnName,
+          content: result,
+        });
+      }
+
+      // Continue the loop — send tool results back to the model
+      continue;
+    }
+
+    // No tool calls — this is the final text response
+    const textContent = message.content || '';
+
+    // If we have a chunk handler, simulate streaming from the already-received text
+    if (onChunk && textContent) {
+      // Split into words and stream them for a natural feel
+      const words = textContent.split(/(\s+)/);
+      for (const word of words) {
+        onChunk(word);
+        // Tiny delay for visual streaming effect
+        await new Promise(r => setTimeout(r, 15));
       }
     }
+
+    return textContent;
   }
 
-  return fullText;
+  return 'I tried to use too many tools in a row. Please try a simpler request.';
 }
 
 export interface DiscoveredServer {

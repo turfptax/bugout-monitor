@@ -104,12 +104,24 @@ export default function ChatMessage({ message }: { message: Message }) {
   const [showTime, setShowTime] = useState(false);
   const [copied, setCopied] = useState(false);
   const isUser = message.role === 'user';
+  const isToolUse = message.role === 'tool-use';
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
+
+  // Tool-use messages get a compact, distinct style
+  if (isToolUse) {
+    return (
+      <div className="flex justify-start mb-2">
+        <div className="max-w-[85%] bg-accent-2/8 border border-accent-2/20 rounded-md px-3 py-1.5 text-xs text-accent-2">
+          {renderMarkdown(message.content)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
