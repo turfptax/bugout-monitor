@@ -377,10 +377,23 @@ function executeGetEquipment(): string {
     byCategory[i.category].push(i);
   });
 
-  const lines = [`Equipment Inventory (${items.length} items):`, ''];
+  const haveCount = items.filter(i => i.status === 'have' || !i.status).length;
+  const wantedCount = items.filter(i => i.status === 'wanted').length;
+  const orderedCount = items.filter(i => i.status === 'ordered').length;
+
+  const statusIcon = (s: string) => {
+    if (s === 'wanted') return '🎯 WANTED';
+    if (s === 'ordered') return '📦 ORDERED';
+    return '✅ HAVE';
+  };
+
+  const lines = [
+    `Equipment Inventory (${items.length} total: ${haveCount} owned, ${wantedCount} wanted, ${orderedCount} ordered):`,
+    ''
+  ];
   for (const [cat, catItems] of Object.entries(byCategory)) {
     lines.push(`## ${cat} (${catItems.length})`);
-    catItems.forEach(i => lines.push(`  - ${i.name} (qty: ${i.qty})${i.notes ? ' — ' + i.notes : ''}`));
+    catItems.forEach(i => lines.push(`  - [${statusIcon(i.status || 'have')}] ${i.name} (qty: ${i.qty})${i.notes ? ' — ' + i.notes : ''}`));
     lines.push('');
   }
   return lines.join('\n');
@@ -434,9 +447,14 @@ function executeRemoveEquipment(args: { name: string }): string {
 }
 
 function executeSuggestGaps(): string {
-  const items = useEquipmentStore.getState().items;
+  const allItems = useEquipmentStore.getState().items;
+  // ONLY count items the user ACTUALLY HAS — wanted/ordered items are still gaps
+  const ownedItems = allItems.filter(i => i.status === 'have' || !i.status);
+  const wantedItems = allItems.filter(i => i.status === 'wanted');
+  const orderedItems = allItems.filter(i => i.status === 'ordered');
+
   const categories: Record<string, string[]> = {};
-  items.forEach(i => {
+  ownedItems.forEach(i => {
     if (!categories[i.category]) categories[i.category] = [];
     categories[i.category].push(i.name.toLowerCase());
   });
@@ -475,7 +493,14 @@ function executeSuggestGaps(): string {
     }
   }
 
-  lines.push('', `Total gaps: ${totalGaps}. ${totalGaps === 0 ? 'Your kit looks complete!' : 'Use add_equipment or bulk_add_equipment to fill gaps.'}`);
+  lines.push('');
+  lines.push(`Summary: ${ownedItems.length} items OWNED, ${wantedItems.length} items WANTED (not yet purchased), ${orderedItems.length} items ORDERED (in transit).`);
+  lines.push(`Total gaps: ${totalGaps}. ${totalGaps === 0 ? 'Your owned kit covers all categories!' : 'Use add_equipment or bulk_add_equipment with status="wanted" to track items to buy.'}`);
+  if (wantedItems.length > 0) {
+    lines.push('');
+    lines.push('Shopping list (WANTED items):');
+    wantedItems.forEach(i => lines.push(`  - ${i.name} (${i.category}) qty: ${i.qty}`));
+  }
   return lines.join('\n');
 }
 

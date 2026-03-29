@@ -66,29 +66,67 @@ export function buildChatSystemPrompt(): string {
     parts.push(lines.join('\n'));
   }
 
-  // Equipment inventory
+  // Equipment inventory — broken down by status
   if (equipment.items.length > 0) {
-    const byCategory: Record<string, string[]> = {};
-    for (const item of equipment.items) {
-      const cat = item.category || 'Uncategorized';
-      if (!byCategory[cat]) byCategory[cat] = [];
-      const entry = item.qty && item.qty !== '1' ? `${item.name} (x${item.qty})` : item.name;
-      byCategory[cat].push(entry);
-    }
+    const haveItems = equipment.items.filter(i => i.status === 'have' || !i.status);
+    const wantedItems = equipment.items.filter(i => i.status === 'wanted');
+    const orderedItems = equipment.items.filter(i => i.status === 'ordered');
 
-    const lines: string[] = [`EQUIPMENT INVENTORY (${equipment.items.length} items):`];
-    for (const [cat, items] of Object.entries(byCategory)) {
-      lines.push(`${cat}: ${items.join(', ')}`);
-    }
+    const formatItems = (items: typeof equipment.items) => {
+      const byCategory: Record<string, string[]> = {};
+      for (const item of items) {
+        const cat = item.category || 'Uncategorized';
+        if (!byCategory[cat]) byCategory[cat] = [];
+        const entry = item.qty && item.qty !== '1' ? `${item.name} (x${item.qty})` : item.name;
+        byCategory[cat].push(entry);
+      }
+      return Object.entries(byCategory).map(([cat, items]) => `  ${cat}: ${items.join(', ')}`).join('\n');
+    };
+
+    const lines: string[] = [
+      `EQUIPMENT INVENTORY (${equipment.items.length} total items):`,
+      '',
+      `✅ OWNED (${haveItems.length} items the user ACTUALLY HAS in their possession):`,
+    ];
+    if (haveItems.length > 0) lines.push(formatItems(haveItems));
+    else lines.push('  (none yet)');
+
+    lines.push('');
+    lines.push(`🎯 WANTED (${wantedItems.length} items the user NEEDS TO BUY — they do NOT have these yet):`);
+    if (wantedItems.length > 0) lines.push(formatItems(wantedItems));
+    else lines.push('  (none — all gaps filled!)');
+
+    lines.push('');
+    lines.push(`📦 ORDERED (${orderedItems.length} items PURCHASED but not yet received):`);
+    if (orderedItems.length > 0) lines.push(formatItems(orderedItems));
+    else lines.push('  (none)');
+
+    lines.push('');
+    lines.push(
+      'CRITICAL DISTINCTION: "HAVE" means the user owns it and has it in their kit. ' +
+      '"WANTED" means they have identified it as a gap but have NOT purchased it yet. ' +
+      '"ORDERED" means purchased but not yet in their possession. ' +
+      'When analyzing gaps, ONLY count "HAVE" items as actual coverage. ' +
+      'WANTED and ORDERED items are still gaps until the user marks them as HAVE. ' +
+      'When the AI adds items via tools, set status to "wanted" (not "have") unless the user explicitly says they already own it.'
+    );
+
     parts.push(lines.join('\n'));
   } else {
-    parts.push('EQUIPMENT: The user has not logged any equipment yet.');
+    parts.push('EQUIPMENT: The user has not logged any equipment yet. They need to start building their kit from scratch.');
   }
 
   parts.push(
     'IMPORTANT: You have access to tools that let you READ and MODIFY the user\'s bugout data directly. ' +
     'USE THEM. When the user asks you to add equipment, check threats, analyze gaps, or update rally points — ' +
-    'call the appropriate tool instead of just describing what to do. For example:\n' +
+    'call the appropriate tool instead of just describing what to do.\n\n' +
+    'EQUIPMENT STATUS RULES:\n' +
+    '- When YOU (the AI) suggest or add items, ALWAYS set status="wanted" — the user does not have them yet.\n' +
+    '- Only set status="have" if the user explicitly says "I already own this" or "I have this".\n' +
+    '- When analyzing gaps, ONLY count items with status="have" as actual coverage.\n' +
+    '- Items with status="wanted" or "ordered" are STILL GAPS in the user\'s preparedness.\n' +
+    '- When reporting what the user has, clearly separate OWNED items from WANTED items.\n\n' +
+    'For example:\n' +
     '- "Add a LifeStraw to my gear" → call add_equipment\n' +
     '- "What am I missing?" → call suggest_equipment_gaps AND get_equipment\n' +
     '- "Build me a basic comms kit" → call bulk_add_equipment with multiple items\n' +
