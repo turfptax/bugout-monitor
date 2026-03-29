@@ -4,6 +4,8 @@ import ThreatHero from './ThreatHero';
 import ThreatCardGrid from './ThreatCardGrid';
 import DiamondIndex from './DiamondIndex';
 import OSINTPanel from './OSINTPanel';
+import LiveScanPanel from './LiveScanPanel';
+import MethodologyPanel from './MethodologyPanel';
 
 export default function DashboardTab() {
   const { data, loading, error, fetchData } = useThreatStore();
@@ -80,7 +82,15 @@ export default function DashboardTab() {
         </div>
       </div>
 
+      {/* Live Scan */}
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-4">
+        <LiveScanPanel />
+      </div>
+
       <OSINTPanel sourceData={sourceData} />
+
+      {/* Methodology */}
+      <MethodologyPanel />
     </div>
   );
 }

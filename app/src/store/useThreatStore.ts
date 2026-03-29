@@ -18,13 +18,24 @@ export const useThreatStore = create<ThreatState>((set) => ({
   fetchData: async () => {
     set({ loading: true, error: null });
     try {
+      // Try static file first (from monitor script)
       const res = await fetch('./threat-data.json');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data: ThreatData = await res.json();
       set({ data, loading: false, lastFetched: Date.now() });
-    } catch (err) {
+    } catch {
+      // Fall back to localStorage (from live scan)
+      try {
+        const cached = localStorage.getItem('bugout-threat-data');
+        if (cached) {
+          const data: ThreatData = JSON.parse(cached);
+          set({ data, loading: false, lastFetched: Date.now() });
+          return;
+        }
+      } catch { /* ignore parse errors */ }
+
       set({
-        error: err instanceof Error ? err.message : 'Failed to fetch threat data',
+        error: 'No threat data available. Click "Scan Now" to fetch live data, or run the monitor script (node monitor/index.js).',
         loading: false,
       });
     }
