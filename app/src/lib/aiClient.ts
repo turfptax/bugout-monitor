@@ -82,24 +82,38 @@ export async function sendChatMessage(
   const model = getModel(config);
   const MAX_TOOL_ROUNDS = 5;
 
-  // Build the conversation with tool definitions
+  // Build the conversation — strip any tool-related messages for clean history
   const conversation: ChatMessage[] = [...messages];
 
+  // First, try WITH tools. If the model doesn't support them, fall back to no tools.
+  let useTools = true;
+
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    // Determine if this is the final round (stream) or a tool-calling round (no stream)
-    const isToolRound = round < MAX_TOOL_ROUNDS - 1;
+    // Clean conversation: remove tool-related messages if tools are disabled
+    const cleanMessages = useTools
+      ? conversation
+      : conversation.filter(m => m.role !== 'tool').map(m => {
+          // Strip tool_calls from assistant messages
+          if (m.role === 'assistant' && m.tool_calls) {
+            return { role: m.role, content: m.content || '(tool call attempted)' };
+          }
+          return m;
+        });
 
     const requestBody: Record<string, unknown> = {
       model,
-      messages: conversation,
-      tools: TOOL_DEFINITIONS,
+      messages: cleanMessages,
       max_tokens: 2048,
       temperature: 0.7,
     };
 
-    // Don't stream during tool-calling rounds — we need the full response to parse tool_calls
-    // Stream only on the final text response
-    if (!isToolRound) {
+    // Only include tools if enabled
+    if (useTools) {
+      requestBody.tools = TOOL_DEFINITIONS;
+    }
+
+    // Stream on the last round or when tools are disabled
+    if (!useTools || round === MAX_TOOL_ROUNDS - 1) {
       requestBody.stream = !!onChunk;
     }
 
@@ -115,8 +129,9 @@ export async function sendChatMessage(
         throw new Error(
           'Cannot reach LM Studio. Make sure:\n' +
           '1. LM Studio is open with a model loaded\n' +
-          '2. The Local Server is running\n' +
-          '3. CORS is enabled in server settings\n\n' +
+          '2. The Local Server is running (click "Start Server")\n' +
+          '3. CORS is enabled in Server Settings → Enable CORS\n' +
+          `4. Server URL matches settings: ${endpoint}\n\n` +
           'Go to Settings → AI Assistant to configure.'
         );
       }
@@ -125,64 +140,75 @@ export async function sendChatMessage(
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => '');
+      const status = response.status;
 
-      // If we got a 400 with tools, retry WITHOUT tools — model may not support function calling
-      if (response.status === 400 && requestBody.tools) {
-        console.warn('Model returned 400 with tools — retrying without tool use');
-        delete requestBody.tools;
-        requestBody.stream = !!onChunk;
-
-        const retryResponse = await fetch(endpoint, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(requestBody),
-        });
-
-        if (retryResponse.ok) {
-          // Stream the fallback response
-          if (onChunk) {
-            const reader = retryResponse.body?.getReader();
-            if (reader) {
-              const decoder = new TextDecoder();
-              let fullText = '';
-              let sseBuffer = '';
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                sseBuffer += decoder.decode(value, { stream: true });
-                const sseLines = sseBuffer.split('\n');
-                sseBuffer = sseLines.pop() || '';
-                for (const sseLine of sseLines) {
-                  const trimmed = sseLine.trim();
-                  if (!trimmed || !trimmed.startsWith('data: ')) continue;
-                  const sseData = trimmed.slice(6);
-                  if (sseData === '[DONE]') continue;
-                  try {
-                    const parsed = JSON.parse(sseData);
-                    const delta = parsed.choices?.[0]?.delta?.content;
-                    if (delta) { fullText += delta; onChunk(delta); }
-                  } catch { /* skip */ }
-                }
-              }
-              return fullText;
-            }
-          }
-          const json = await retryResponse.json();
-          return json.choices?.[0]?.message?.content || '';
-        }
+      // If 400 and we had tools — model doesn't support function calling
+      // Disable tools and retry this round
+      if (status === 400 && useTools) {
+        console.warn(`Model returned 400 with tools — disabling tool use and retrying`);
+        useTools = false;
+        round--; // retry this round
+        continue;
       }
 
-      let errorMsg = `HTTP ${response.status}`;
+      // Parse error details for a better message
+      let errorMsg = `HTTP ${status}`;
+      let errorDetail = '';
       try {
         const parsed = JSON.parse(errorText);
         errorMsg = parsed.error?.message || parsed.message || errorMsg;
+        errorDetail = parsed.error?.type || parsed.error?.code || '';
       } catch {
-        if (errorText) errorMsg += `: ${errorText.slice(0, 200)}`;
+        if (errorText) errorDetail = errorText.slice(0, 300);
       }
+
+      // Provide helpful context based on status code
+      if (status === 400) {
+        errorMsg += '\n\nThe model rejected the request. Try a different model in Settings.';
+        if (errorDetail) errorMsg += `\n\nDetail: ${errorDetail}`;
+      } else if (status === 401) {
+        errorMsg = 'Invalid API key. Check your OpenRouter key in Settings.';
+      } else if (status === 402) {
+        errorMsg = 'OpenRouter account has insufficient credits.';
+      } else if (status === 429) {
+        errorMsg = 'Rate limited — wait a moment and try again.';
+      } else if (status === 503) {
+        errorMsg = 'Model is temporarily unavailable. Try again or switch models.';
+      }
+
       throw new Error(errorMsg);
     }
 
-    // Parse the response
+    // If streaming was requested and enabled, handle SSE stream
+    if (requestBody.stream && onChunk) {
+      const reader = response.body?.getReader();
+      if (reader) {
+        const decoder = new TextDecoder();
+        let fullText = '';
+        let sseBuffer = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          sseBuffer += decoder.decode(value, { stream: true });
+          const sseLines = sseBuffer.split('\n');
+          sseBuffer = sseLines.pop() || '';
+          for (const sseLine of sseLines) {
+            const trimmed = sseLine.trim();
+            if (!trimmed || !trimmed.startsWith('data: ')) continue;
+            const sseData = trimmed.slice(6);
+            if (sseData === '[DONE]') continue;
+            try {
+              const parsed = JSON.parse(sseData);
+              const delta = parsed.choices?.[0]?.delta?.content;
+              if (delta) { fullText += delta; onChunk(delta); }
+            } catch { /* skip malformed chunks */ }
+          }
+        }
+        return fullText;
+      }
+    }
+
+    // Parse non-streaming JSON response
     const json = await response.json();
     const choice = json.choices?.[0];
 
@@ -191,7 +217,7 @@ export async function sendChatMessage(
     const message = choice.message;
 
     // Check if the model wants to call tools
-    if (message.tool_calls && message.tool_calls.length > 0) {
+    if (useTools && message.tool_calls && message.tool_calls.length > 0) {
       // Add the assistant's tool-calling message to the conversation
       conversation.push({
         role: 'assistant',
@@ -235,11 +261,9 @@ export async function sendChatMessage(
 
     // If we have a chunk handler, simulate streaming from the already-received text
     if (onChunk && textContent) {
-      // Split into words and stream them for a natural feel
       const words = textContent.split(/(\s+)/);
       for (const word of words) {
         onChunk(word);
-        // Tiny delay for visual streaming effect
         await new Promise(r => setTimeout(r, 15));
       }
     }
