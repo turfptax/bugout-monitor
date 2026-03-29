@@ -83,16 +83,34 @@ export async function sendChatMessage(
   const MAX_TOOL_ROUNDS = 5;
 
   // Clean incoming messages: strip tool-related history from previous turns
-  // LM Studio templates choke on tool_call/tool messages in history
-  const cleanIncoming = messages
-    .filter(m => m.role !== 'tool')
-    .map(m => {
-      if (m.role === 'assistant' && m.tool_calls) {
-        // Keep the assistant text, drop the tool_calls
-        return { role: m.role as const, content: m.content || '' };
-      }
-      return m;
-    });
+  // Clean incoming messages for compatibility with all models (esp. Qwen on LM Studio)
+  // 1. Strip tool-related messages from previous turns
+  // 2. Ensure first non-system message is a user message (Qwen template requirement)
+  const cleanIncoming: ChatMessage[] = [];
+  let foundFirstUser = false;
+
+  for (const m of messages) {
+    // Skip tool role messages from previous turns
+    if (m.role === 'tool') continue;
+
+    // Strip tool_calls from assistant messages
+    if (m.role === 'assistant' && m.tool_calls) {
+      cleanIncoming.push({ role: 'assistant', content: m.content || '' });
+      continue;
+    }
+
+    // Track if we've seen a user message after system
+    if (m.role === 'user') foundFirstUser = true;
+
+    // If this is an assistant message and we haven't had a user message yet,
+    // inject a synthetic user message so templates don't break
+    if (m.role === 'assistant' && !foundFirstUser) {
+      cleanIncoming.push({ role: 'user', content: '(continuing conversation)' });
+      foundFirstUser = true;
+    }
+
+    cleanIncoming.push(m);
+  }
 
   // Working conversation starts clean — tool messages only added within current round
   const conversation: ChatMessage[] = [...cleanIncoming];
