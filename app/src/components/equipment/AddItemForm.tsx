@@ -10,6 +10,7 @@ export default function AddItemForm() {
   const [name, setName] = useState('');
   const [qty, setQty] = useState('1');
   const [category, setCategory] = useState<string>(EQUIPMENT_CATEGORIES[0]);
+  const [status, setStatus] = useState<'have' | 'wanted' | 'ordered'>('have');
   const [notes, setNotes] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -18,7 +19,7 @@ export default function AddItemForm() {
       showToast('error', 'Item name is required');
       return;
     }
-    addItem({ name: name.trim(), qty, category, notes: notes.trim() });
+    addItem({ name: name.trim(), qty, category, status, notes: notes.trim() });
     showToast('success', `Added "${name.trim()}" to ${category}`);
     setName('');
     setQty('1');
@@ -66,6 +67,21 @@ export default function AddItemForm() {
               {cat}
             </option>
           ))}
+        </select>
+      </div>
+
+      <div className="w-28">
+        <label className="block text-[0.68rem] text-text-dim uppercase tracking-wider mb-1">
+          Status
+        </label>
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value as 'have' | 'wanted' | 'ordered')}
+          className="w-full bg-surface-2 border border-border rounded px-3 py-1.5 text-sm text-text-primary focus:outline-none focus:border-accent transition-colors cursor-pointer"
+        >
+          <option value="have">✅ Have</option>
+          <option value="wanted">🎯 Wanted</option>
+          <option value="ordered">📦 Ordered</option>
         </select>
       </div>
 

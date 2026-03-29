@@ -20,6 +20,7 @@ export const useEquipmentStore = create<EquipmentState>()(
       addItem: (item) => {
         const newItem: EquipmentItem = {
           ...item,
+          status: item.status || 'have',
           id: crypto.randomUUID(),
           added: new Date().toISOString(),
         };
@@ -50,6 +51,7 @@ export const useEquipmentStore = create<EquipmentState>()(
             .map(i => ({
               ...i,
               id: i.id || crypto.randomUUID(),
+              status: i.status || 'have',
               added: i.added || new Date().toISOString(),
             }));
           return { items: [...s.items, ...toAdd] };

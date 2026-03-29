@@ -4,6 +4,7 @@ export interface EquipmentItem {
   qty: string;
   category: string;
   notes: string;
+  status: 'have' | 'wanted' | 'ordered';
   added?: string;
 }
 

@@ -125,6 +125,53 @@ export async function sendChatMessage(
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => '');
+
+      // If we got a 400 with tools, retry WITHOUT tools — model may not support function calling
+      if (response.status === 400 && requestBody.tools) {
+        console.warn('Model returned 400 with tools — retrying without tool use');
+        delete requestBody.tools;
+        requestBody.stream = !!onChunk;
+
+        const retryResponse = await fetch(endpoint, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(requestBody),
+        });
+
+        if (retryResponse.ok) {
+          // Stream the fallback response
+          if (onChunk) {
+            const reader = retryResponse.body?.getReader();
+            if (reader) {
+              const decoder = new TextDecoder();
+              let fullText = '';
+              let sseBuffer = '';
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                sseBuffer += decoder.decode(value, { stream: true });
+                const sseLines = sseBuffer.split('\n');
+                sseBuffer = sseLines.pop() || '';
+                for (const sseLine of sseLines) {
+                  const trimmed = sseLine.trim();
+                  if (!trimmed || !trimmed.startsWith('data: ')) continue;
+                  const sseData = trimmed.slice(6);
+                  if (sseData === '[DONE]') continue;
+                  try {
+                    const parsed = JSON.parse(sseData);
+                    const delta = parsed.choices?.[0]?.delta?.content;
+                    if (delta) { fullText += delta; onChunk(delta); }
+                  } catch { /* skip */ }
+                }
+              }
+              return fullText;
+            }
+          }
+          const json = await retryResponse.json();
+          return json.choices?.[0]?.message?.content || '';
+        }
+      }
+
       let errorMsg = `HTTP ${response.status}`;
       try {
         const parsed = JSON.parse(errorText);

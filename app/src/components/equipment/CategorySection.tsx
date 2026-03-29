@@ -30,6 +30,16 @@ export default function CategorySection({ category, items }: Props) {
         <span className="text-[0.68rem] text-text-dim bg-surface-2 border border-border px-1.5 py-0.5 rounded-full">
           {items.length}
         </span>
+        {items.filter(i => i.status === 'wanted').length > 0 && (
+          <span className="text-[0.62rem] text-threat-yellow bg-threat-yellow/10 border border-threat-yellow/30 px-1.5 py-0.5 rounded-full">
+            {items.filter(i => i.status === 'wanted').length} wanted
+          </span>
+        )}
+        {items.filter(i => i.status === 'ordered').length > 0 && (
+          <span className="text-[0.62rem] text-accent-2 bg-accent-2/10 border border-accent-2/30 px-1.5 py-0.5 rounded-full">
+            {items.filter(i => i.status === 'ordered').length} ordered
+          </span>
+        )}
       </button>
 
       {isOpen && (
@@ -41,6 +51,9 @@ export default function CategorySection({ category, items }: Props) {
               </th>
               <th className="bg-surface-2 text-accent text-center px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-16">
                 Qty
+              </th>
+              <th className="bg-surface-2 text-accent text-center px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-24">
+                Status
               </th>
               <th className="bg-surface-2 text-accent text-left px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold">
                 Notes

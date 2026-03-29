@@ -62,6 +62,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
             description: 'Category',
             enum: [...EQUIPMENT_CATEGORIES],
           },
+          status: { type: 'string', enum: ['have', 'wanted', 'ordered'], description: 'Status: "have" = already owned, "wanted" = need to buy, "ordered" = purchased but not arrived. Default: "wanted" for AI suggestions.' },
           notes: { type: 'string', description: 'Optional notes about the item' },
         },
         required: ['name', 'qty', 'category'],
@@ -253,14 +254,16 @@ function executeGetEquipment(): string {
   return lines.join('\n');
 }
 
-function executeAddEquipment(args: { name: string; qty: string; category: string; notes?: string }): string {
+function executeAddEquipment(args: { name: string; qty: string; category: string; notes?: string; status?: string }): string {
   useEquipmentStore.getState().addItem({
     name: args.name,
     qty: args.qty,
     category: args.category,
+    status: (args.status as 'have' | 'wanted' | 'ordered') || 'wanted',
     notes: args.notes || '',
   });
-  return `Added "${args.name}" (qty: ${args.qty}) to ${args.category}.`;
+  const statusLabel = args.status === 'have' ? '✅' : args.status === 'ordered' ? '📦' : '🎯';
+  return `Added "${args.name}" (qty: ${args.qty}) to ${args.category} as ${statusLabel} ${args.status || 'wanted'}.`;
 }
 
 function executeBulkAddEquipment(args: { items: Array<{ name: string; qty: string; category: string; notes?: string }> }): string {
@@ -280,6 +283,7 @@ function executeBulkAddEquipment(args: { items: Array<{ name: string; qty: strin
       name: item.name,
       qty: item.qty,
       category: item.category,
+      status: (item as { status?: string }).status as 'have' | 'wanted' | 'ordered' || 'wanted',
       notes: item.notes || '',
     });
     existing.add(key);
