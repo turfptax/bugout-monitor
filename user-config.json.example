@@ -1,0 +1,59 @@
+{
+  "profile": {
+    "teamName": "Your Family",
+    "teamSize": "2 adults",
+    "baseCityState": "Lincoln, NE"
+  },
+  "location": {
+    "lat": 40.8136,
+    "lon": -96.7026,
+    "state": "NE",
+    "county": "Lancaster",
+    "ugcZone": "NEZ055",
+    "fipsCode": "31109",
+    "nearbyTargets": ["Offutt AFB (50mi NE) - USSTRATCOM HQ"],
+    "prevailingWinds": "west-to-east"
+  },
+  "routes": {
+    "alpha": {
+      "name": "Primary",
+      "direction": "Northwest",
+      "path": "Description of your primary evacuation route",
+      "distance": "200 mi",
+      "driveTime": "3.5 hours",
+      "waypoints": ["Town A (60 mi)", "Town B (100 mi)", "Destination (200 mi)"]
+    },
+    "bravo": {
+      "name": "Alternate",
+      "direction": "Southwest",
+      "path": "Description of your alternate route",
+      "distance": "175 mi",
+      "driveTime": "3 hours",
+      "waypoints": ["Town A (45 mi)", "Town B (130 mi)"]
+    },
+    "charlie": {
+      "name": "On Foot",
+      "direction": "West",
+      "path": "Trail/road system for foot travel",
+      "distance": "30-50 mi to rural isolation",
+      "driveTime": "N/A",
+      "waypoints": []
+    }
+  },
+  "comms": {
+    "privateFreq": "",
+    "backupFreq": "",
+    "frsChannel": "",
+    "meshtasticChannel": "",
+    "outOfStateContact": ""
+  },
+  "rallyPoints": {
+    "1": { "name": "Home", "description": "Your home address" },
+    "2": { "name": "", "description": "A landmark within 5 miles you both know" },
+    "3": { "name": "", "description": "A point on your primary bugout route" }
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "google/gemini-2.0-flash-001"
+  }
+}

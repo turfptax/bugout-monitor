@@ -1,0 +1,31 @@
+{
+  "name": "bugout-monitor",
+  "version": "1.0.0",
+  "description": "AI-powered disaster preparedness dashboard with real-time OSINT threat monitoring",
+  "type": "module",
+  "main": "monitor/index.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "monitor": "node monitor/index.js",
+    "start": "node monitor/index.js",
+    "serve": "npx http-server . -p 8080 -a 0.0.0.0 -c-1 --cors"
+  },
+  "keywords": [
+    "disaster-preparedness",
+    "bugout",
+    "threat-monitor",
+    "osint",
+    "emergency-planning",
+    "solar-weather",
+    "geopolitical",
+    "survival"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "rss-parser": "^3.13.0"
+  }
+}

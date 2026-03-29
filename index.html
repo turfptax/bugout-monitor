@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bugout & Disaster Plan — Lincoln, NE</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #f0883e;
+    --accent2: #58a6ff;
+    --red: #f85149;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1a1e2e 0%, #0d1117 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 2rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  .header .subtitle {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+  }
+  .header .meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .header .meta span { display: flex; align-items: center; gap: 0.35rem; }
+
+  /* Layout */
+  .layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* Sidebar / TOC */
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 100px;
+    height: calc(100vh - 100px);
+    overflow-y: auto;
+  }
+  .sidebar h3 {
+    padding: 0 1.25rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 0.75rem;
+  }
+  .sidebar a {
+    display: block;
+    padding: 0.5rem 1.25rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent);
+    background: rgba(240,136,62,0.06);
+    border-left-color: var(--accent);
+  }
+
+  /* Main content */
+  .content {
+    flex: 1;
+    padding: 2rem 3rem;
+    max-width: 900px;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 120px;
+  }
+  .section-number {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-right: 0.6rem;
+    vertical-align: middle;
+  }
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  h3 {
+    font-size: 1.1rem;
+    color: var(--accent2);
+    margin: 1.5rem 0 0.75rem;
+  }
+  h4 {
+    font-size: 0.95rem;
+    color: var(--purple);
+    margin: 1rem 0 0.5rem;
+  }
+  p { margin-bottom: 0.75rem; color: var(--text); }
+  strong { color: var(--text); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) { background: rgba(22,27,34,0.5); }
+  tr:hover { background: rgba(240,136,62,0.04); }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-high { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
+  .badge-medium { background: rgba(210,153,34,0.15); color: var(--yellow); border: 1px solid rgba(210,153,34,0.3); }
+  .badge-low { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
+  .badge-extreme { background: rgba(248,81,73,0.25); color: #ff7b72; border: 1px solid rgba(248,81,73,0.5); }
+
+  .badge-primary { background: rgba(240,136,62,0.2); color: var(--accent); border: 1px solid rgba(240,136,62,0.4); }
+  .badge-alternate { background: rgba(88,166,255,0.15); color: var(--accent2); border: 1px solid rgba(88,166,255,0.3); }
+  .badge-foot { background: rgba(188,140,255,0.15); color: var(--purple); border: 1px solid rgba(188,140,255,0.3); }
+
+  /* Callout boxes */
+  .callout {
+    border-left: 3px solid;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.9rem;
+  }
+  .callout-warn {
+    border-color: var(--yellow);
+    background: rgba(210,153,34,0.08);
+  }
+  .callout-danger {
+    border-color: var(--red);
+    background: rgba(248,81,73,0.06);
+  }
+  .callout-info {
+    border-color: var(--accent2);
+    background: rgba(88,166,255,0.06);
+  }
+  .callout-success {
+    border-color: var(--green);
+    background: rgba(63,185,80,0.06);
+  }
+  .callout-title {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Lists */
+  ul, ol {
+    margin: 0.5rem 0 1rem 1.5rem;
+    color: var(--text);
+  }
+  li { margin-bottom: 0.35rem; font-size: 0.9rem; }
+  li strong { color: var(--accent); }
+
+  /* Scenario cards */
+  .scenario-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+  }
+  .scenario-card h4 {
+    margin-top: 0;
+    color: var(--accent);
+    font-size: 1rem;
+  }
+  .scenario-card .field {
+    margin: 0.5rem 0;
+  }
+  .scenario-card .field-label {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  /* Tier cards */
+  .tier-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+  }
+  .tier-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+  .tier-1 { background: rgba(240,136,62,0.2); color: var(--accent); border: 1px solid rgba(240,136,62,0.4); }
+  .tier-2 { background: rgba(88,166,255,0.15); color: var(--accent2); border: 1px solid rgba(88,166,255,0.3); }
+  .tier-3 { background: rgba(188,140,255,0.15); color: var(--purple); border: 1px solid rgba(188,140,255,0.3); }
+  .tier-4 { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
+  .tier-5 { background: rgba(139,148,158,0.2); color: var(--text-dim); border: 1px solid rgba(139,148,158,0.3); }
+
+  /* Route cards */
+  .route-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    border-left: 4px solid;
+  }
+  .route-alpha { border-left-color: var(--accent); }
+  .route-bravo { border-left-color: var(--accent2); }
+  .route-charlie { border-left-color: var(--purple); }
+
+  /* Decision table */
+  .decision-table td:first-child { font-weight: 600; color: var(--accent); width: 160px; }
+  .decision-table td:nth-child(2) { color: var(--green); }
+  .decision-table td:nth-child(3) { color: var(--red); }
+
+  /* Checklist */
+  .checklist {
+    list-style: none;
+    margin-left: 0;
+    counter-reset: check;
+  }
+  .checklist li {
+    counter-increment: check;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.25rem;
+    background: var(--surface);
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .checklist li::before {
+    content: counter(check);
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-right: 0.75rem;
+  }
+
+  /* Bag loadout grid */
+  .loadout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .loadout-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+  .loadout-card h4 { margin-top: 0; }
+
+  /* Faraday box */
+  .faraday-box {
+    background: rgba(210,153,34,0.08);
+    border: 1px dashed var(--yellow);
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+  }
+  .faraday-box .label {
+    color: var(--yellow);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.4rem;
+  }
+
+  /* Fill-in markers */
+  .fill-in {
+    background: rgba(248,81,73,0.1);
+    border: 1px dashed var(--red);
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    color: var(--red);
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  /* Cost summary */
+  .cost-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+  .cost-summary .amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  /* ── Inventory Form ── */
+  .inventory-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0 1.5rem;
+  }
+  .inventory-form input,
+  .inventory-form select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    padding: 0.4rem 0.6rem;
+    font-size: 0.82rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .inventory-form input:focus,
+  .inventory-form select:focus {
+    border-color: var(--accent2);
+  }
+  .inventory-form input[name="item-name"] { flex: 2; min-width: 160px; }
+  .inventory-form input[name="item-qty"] { width: 55px; text-align: center; }
+  .inventory-form select { flex: 1; min-width: 130px; }
+  .inventory-form input[name="item-notes"] { flex: 2; min-width: 140px; }
+  .inventory-form button {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+  .inventory-form button:hover { opacity: 0.85; }
+
+  tr.user-added { border-left: 3px solid var(--accent2); }
+  tr.user-added td:first-child::before {
+    content: "\2605 ";
+    color: var(--accent2);
+    font-size: 0.7rem;
+  }
+
+  .btn-delete {
+    background: none;
+    border: none;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0 0.3rem;
+    margin-left: 0.5rem;
+    opacity: 0.6;
+    vertical-align: middle;
+    transition: opacity 0.15s;
+  }
+  .btn-delete:hover { opacity: 1; }
+
+  #inventory td.editable-cell { cursor: pointer; position: relative; }
+  #inventory td.editable-cell:hover { background: rgba(88,166,255,0.06); }
+  #inventory td.editable-cell:hover::after {
+    content: "\270E";
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.65rem;
+    color: var(--accent2);
+    opacity: 0.5;
+  }
+  #inventory tr.static-edited { border-left: 3px solid var(--purple); }
+  #inventory tr.static-edited td:first-child::before {
+    content: "\270E ";
+    color: var(--purple);
+    font-size: 0.7rem;
+  }
+  .inline-edit {
+    background: var(--surface2);
+    border: 1px solid var(--accent2);
+    border-radius: 3px;
+    color: var(--text);
+    padding: 0.2rem 0.4rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    width: 95%;
+    outline: none;
+  }
+
+  /* ── Rally Point Editor ── */
+  .rally-editable {
+    display: inline-block;
+    border: 1px dashed var(--accent2);
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    min-width: 180px;
+    transition: all 0.15s;
+    font-size: 0.85rem;
+  }
+  .rally-editable:hover {
+    background: rgba(88,166,255,0.08);
+    border-color: var(--accent);
+  }
+  .rally-editable.has-value {
+    border: 1px solid var(--green);
+    color: var(--text);
+    background: rgba(63,185,80,0.06);
+  }
+  .rally-editable.placeholder {
+    color: var(--text-dim);
+    font-style: italic;
+  }
+  .rally-input {
+    background: var(--surface2);
+    border: 1px solid var(--accent2);
+    border-radius: 4px;
+    color: var(--text);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    min-width: 250px;
+    outline: none;
+  }
+
+  /* Print */
+  @media print {
+    .sidebar { display: none; }
+    .header { position: static; }
+    .content { max-width: 100%; padding: 1rem; }
+    body { background: white; color: black; }
+    .callout, .scenario-card, .tier-card, .route-card, .loadout-card { break-inside: avoid; }
+    .inventory-form { display: none !important; }
+    .btn-delete { display: none !important; }
+    .inline-edit { display: none !important; }
+    #inventory td.editable-cell:hover::after { display: none; }
+    #inventory tr.static-edited { border-left: none; }
+    .rally-input { display: none !important; }
+    .rally-editable { border: none !important; background: none !important; padding: 0 !important; }
+    tr.user-added { border-left: none; }
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .content { padding: 1.5rem; }
+    .loadout-grid { grid-template-columns: 1fr; }
+    .header .meta { flex-wrap: wrap; gap: 0.75rem; }
+    .inventory-form { flex-direction: column; align-items: stretch; }
+    .inventory-form input, .inventory-form select { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>Bugout & Disaster Plan</h1>
+  <div class="subtitle">Your Team &mdash; Lincoln, NE</div>
+  <div class="meta">
+    <span>&#128197; Created: [DATE]</span>
+    <span>&#128101; Team: 2 adults</span>
+    <span>&#128205; Base: Lincoln, NE</span>
+    <span>&#128260; Review: Every 6 months</span>
+  </div>
+</div>
+
+<!-- THREAT-MONITOR-START -->
+<style>
+  .osint-panel { background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem 1.5rem; }
+  .osint-inner { max-width:1400px;margin:0 auto; }
+  .osint-toggle { cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0; }
+  .osint-toggle h3 { font-size:0.8rem;color:var(--accent2);text-transform:uppercase;letter-spacing:1.5px;margin:0;padding:0; }
+  .osint-toggle .arrow { color:var(--text-dim);font-size:0.75rem;transition:transform 0.2s; }
+  .osint-body { display:none;padding-bottom:0.5rem; }
+  .osint-panel.open .osint-body { display:block; }
+  .osint-panel.open .arrow { transform:rotate(180deg); }
+  .osint-grid { display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.75rem; }
+  .osint-card { background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow:hidden; }
+  .osint-card h4 { font-size:0.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:0 0 0.75rem 0;padding:0 0 0.5rem;border-bottom:1px solid var(--border); }
+  .osint-row { display:flex;justify-content:space-between;align-items:center;padding:0.3rem 0;font-size:0.8rem; }
+  .osint-row .label { color:var(--text-dim); }
+  .osint-row .value { color:var(--text);font-weight:600;font-variant-numeric:tabular-nums; }
+  .osint-headline { padding:0.35rem 0;font-size:0.78rem;color:var(--text-dim);border-bottom:1px solid rgba(48,54,61,0.5);line-height:1.4; }
+  .osint-headline:last-child { border-bottom:none; }
+  .osint-headline .src { color:var(--accent2);font-size:0.68rem;font-weight:600;text-transform:uppercase;margin-right:0.4rem; }
+  .osint-headline .tone-neg { color:var(--red); }
+  .osint-headline .tone-pos { color:var(--green); }
+  .osint-headline .tone-neut { color:var(--text-dim); }
+  .osint-status { display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:0.4rem;vertical-align:middle; }
+  .osint-status.ok { background:var(--green); }
+  .osint-status.err { background:var(--red); }
+  .osint-source-list { margin-top:0.75rem; }
+  .osint-source-item { display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0;font-size:0.78rem; }
+  .osint-source-item .name { color:var(--text);flex:1; }
+  .osint-source-item .detail { color:var(--text-dim);font-size:0.72rem; }
+  .osint-meter { height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:0.2rem; }
+  .osint-meter-fill { height:100%;border-radius:2px;transition:width 0.3s; }
+  @media (max-width:900px) { .osint-grid { grid-template-columns:1fr; } }
+</style>
+<div style="background:var(--surface);border-bottom:2px solid var(--border);padding:1rem 2rem;">
+  <div style="max-width:1400px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
+      <h2 style="font-size:1rem;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;border:none;margin:0;padding:0;">
+        &#128737;&#65039; Threat Monitor
+      </h2>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span style="font-size:0.7rem;color:var(--text-dim);padding:0.15rem 0.5rem;background:var(--surface2);border-radius:3px;border:1px solid var(--border);">AI &middot; google/gemini-2.0-flash-001 &middot; 8 sources</span>
+        <span style="font-size:0.75rem;color:var(--text-dim);">
+          Updated: Sunday, March 29, 2026 at 09:13 AM CDT
+        </span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;">
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.75rem 1rem;border-left:3px solid var(--yellow);min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
+          <div style="font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">☀️ Solar / Carrington</div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.35rem;">
+          <div style="font-size:1.5rem;font-weight:700;color:var(--yellow);line-height:1;">4/10</div>
+          <span class="badge badge-medium" style="font-size:0.65rem;">Low</span>
+        </div>
+        <div style="font-size:0.78rem;color:var(--text-dim);line-height:1.35;">Several Earth-directed CMEs and minor geomagnetic storm (G1) activity are present, with a Kp index reaching 4, indicating unsettled conditions, but no X-class flares are detected.</div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.75rem 1rem;border-left:3px solid var(--yellow);min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
+          <div style="font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">☢️ Nuclear Threat</div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.35rem;">
+          <div style="font-size:1.5rem;font-weight:700;color:var(--yellow);line-height:1;">4/10</div>
+          <span class="badge badge-medium" style="font-size:0.65rem;">Low</span>
+        </div>
+        <div style="font-size:0.78rem;color:var(--text-dim);line-height:1.35;">The Doomsday Clock remains at a historically dangerous level, and the geopolitical environment is tense, but there are no new escalatory events in the last 48 hours.</div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.75rem 1rem;border-left:3px solid var(--green);min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
+          <div style="font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🌪️ Weather / Tornado</div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.35rem;">
+          <div style="font-size:1.5rem;font-weight:700;color:var(--green);line-height:1;">1/10</div>
+          <span class="badge badge-low" style="font-size:0.65rem;">Minimal</span>
+        </div>
+        <div style="font-size:0.78rem;color:var(--text-dim);line-height:1.35;">There are no active weather alerts for Lancaster County, NE.</div>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.75rem 1rem;border-left:3px solid var(--yellow);min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
+          <div style="font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🎯 Overall Threat</div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.35rem;">
+          <div style="font-size:1.5rem;font-weight:700;color:var(--yellow);line-height:1;">4/10</div>
+          <span class="badge badge-medium" style="font-size:0.65rem;">Low</span>
+        </div>
+        <div style="font-size:0.78rem;color:var(--text-dim);line-height:1.35;">Geopolitical tensions and space weather activity are elevated, but no immediate threats are present in Lancaster County.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:0.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:1rem;border-left:3px solid var(--yellow);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span style="font-size:0.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;">&#128214; Diamond Collapse Index</span>
+          <span style="font-size:0.62rem;color:var(--text-dim);font-style:italic;">Jared Diamond's 5-Factor Framework</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:0.4rem;">
+          <span style="font-size:1.3rem;font-weight:700;color:var(--yellow);line-height:1;">5/10</span>
+          <span class="badge badge-medium" style="font-size:0.6rem;">Elevated</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1.5rem;">
+        <div>
+  </div>
+        <div>  
+          <div style="font-size:0.7rem;color:var(--text-dim);margin-top:0.5rem;padding-top:0.4rem;border-top:1px solid var(--border);line-height:1.35;">
+            <strong style="color:var(--text);">Composite:</strong> The Diamond framework indicates elevated risk due to geopolitical tensions, moderate economic stress, and low public confidence.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="osint-panel">
+  <div class="osint-inner">
+    <div class="osint-toggle">
+      <h3>&#128225; OSINT Intelligence Feed &mdash; 8/8 sources online</h3>
+      <span class="arrow">&#9660;</span>
+    </div>
+    <div class="osint-body">
+      <div class="osint-grid">
+        
+    <div class="osint-card">
+      <h4>&#9728;&#65039; Solar / Space Weather Intel</h4>
+      <div class="osint-row"><span class="label">Current Kp Index</span><span class="value" style="color:var(--green);">2</span></div>
+      <div class="osint-row"><span class="label">24h Max Kp</span><span class="value" style="color:var(--green);">3</span></div>
+      <div class="osint-meter"><div class="osint-meter-fill" style="width:33.33333333333333%;background:var(--green);"></div></div>
+      <div class="osint-row"><span class="label">Condition</span><span class="value">Quiet</span></div>
+      <div class="osint-row"><span class="label">Storm Level</span><span class="value">None</span></div>
+      
+      <div class="osint-row"><span class="label">SWPC Geomag Scale</span><span class="value" style="color:var(--text);">G1 ⚠ WARNING</span></div>
+      <div class="osint-row"><span class="label">Radio Blackout</span><span class="value">R0</span></div>
+      <div class="osint-row"><span class="label">M-flare prob (24h)</span><span class="value">0%</span></div>
+      <div class="osint-row"><span class="label">X-flare prob (24h)</span><span class="value" style="color:var(--text);">0%</span></div>
+      
+      <div class="osint-row"><span class="label">CMEs (7d)</span><span class="value">29 <span style="color:var(--red);font-size:0.7rem;">EARTH-DIRECTED</span></span></div>
+      <div class="osint-row"><span class="label">M/X Flares (7d)</span><span class="value" style="color:var(--text);">2</span></div>
+      <div class="osint-row"><span class="label">Geomag Storms (7d)</span><span class="value">1 (max Kp: 6.67)</span></div>
+    </div>
+        
+    <div class="osint-card">
+      <h4>&#9762;&#65039; Nuclear / Geopolitical Intel</h4>
+      <div class="osint-row"><span class="label">Doomsday Clock</span><span class="value" style="color:var(--yellow);">85 seconds to midnight</span></div>
+      <div class="osint-row"><span class="label">Clock Updated</span><span class="value">2026-01-27</span></div>
+      <div class="osint-row"><span class="label">RSS Headlines (48h)</span><span class="value">0</span></div>
+      
+      <div class="osint-row"><span class="label">GDELT Nuclear Articles</span><span class="value">0</span></div>
+      <div class="osint-row"><span class="label">GDELT Military Articles</span><span class="value">0</span></div>
+      <div class="osint-row"><span class="label">Avg Tone (nuclear/mil)</span><span class="value " style="color:var(--text-dim);">0</span></div>
+      <div style="margin-top:0.75rem;border-top:1px solid var(--border);padding-top:0.5rem;">
+      <div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem;">Recent Headlines</div>
+      <div class="osint-headline"><span class="src">Arms Control Association</span>Pakistan Extends Nuclear Deterrence to Saudi Arabia</div><div class="osint-headline"><span class="src">Arms Control Association</span>Brokered Bargaining in Nuclear South Asia: U.S. Mediation in the India-Pakistan Pahalgam Crisis</div><div class="osint-headline"><span class="src">Arms Control Association</span>Ceasefire Halts India, Pakistan Missile Exchange</div><div class="osint-headline"><span class="src">Arms Control Association</span>Hope Is Not a Strategy: The Urgent Need for De-Escalation In South Asia</div><div class="osint-headline"><span class="src">Arms Control Association</span>Pakistani Man Indicted for Smuggling</div>
+    </div>
+    </div>
+        
+    <div class="osint-card">
+      <h4>&#127786;&#65039; Weather / Tornado Intel</h4>
+      <div class="osint-row"><span class="label">your county Alerts</span><span class="value">0 </span></div>
+      <div class="osint-row"><span class="label">Highest Severity</span><span class="value">None</span></div>
+      <div class="osint-row"><span class="label">Statewide Severe/Extreme</span><span class="value">2</span></div>
+      
+    </div>
+        
+    <div class="osint-card">
+      <h4>&#127760; GDELT Global News Monitor (7d)</h4>
+      <div class="osint-row"><span class="label">Nuclear Threat</span><span class="value">0 articles</span></div>
+      <div class="osint-meter"><div class="osint-meter-fill" style="width:0%;background:var(--red);"></div></div>
+      <div class="osint-row"><span class="label">Military Escalation</span><span class="value">0 articles</span></div>
+      <div class="osint-meter"><div class="osint-meter-fill" style="width:0%;background:var(--yellow);"></div></div>
+      <div class="osint-row"><span class="label">US Civil Unrest</span><span class="value">0 articles</span></div>
+      <div class="osint-meter"><div class="osint-meter-fill" style="width:0%;background:var(--accent2);"></div></div>
+      <div class="osint-row" style="margin-top:0.5rem;"><span class="label">Combined Tone</span><span class="value" style="color:var(--text-dim);">0 <span style="font-size:0.68rem;font-weight:400;color:var(--text-dim);">(neg = concerning)</span></span></div>
+      
+    </div>
+      </div>
+      <div class="osint-card" style="margin-top:1rem;">
+        <h4>&#128752; Source Status</h4>
+        
+    <div class="osint-source-item">
+      <span class="osint-status ok"></span>
+      <span class="name">NOAA SWPC Kp Index</span>
+      <span class="detail">Kp 2 (24h max: 3)</span>
+    </div>
+    <div class="osint-source-item">
+      <span class="osint-status ok"></span>
+      <span class="name">NOAA SWPC Alerts</span>
+      <span class="detail">7 alert(s)</span>
+    </div>
+    <div class="osint-source-item">
+      <span class="osint-status ok"></span>
+      <span class="name">NASA DONKI</span>
+      <span class="detail">29 CME, 2 flare, 1 storm</span>
+    </div>
+    <div class="osint-source-item">
+      <span class="osint-status ok"></span>
+      <span class="name">NWS Weather Alerts</span>
+      <span class="detail">0 alert(s) your county</span>
+    </div>
+    <div class="osint-source-item">
+      <span class="osint-status ok"></span>
+      <span class="name">Arms Control RSS</span>
+      <span class="detail">5 headline(s)</span>
+    </div>
+    <div class="osint-source-item">
+      <span class="osint-status ok"></span>
+      <span class="name">GDELT Global News</span>
+      <span class="detail">0 article(s)</span>
+    </div>
+    <div class="osint-source-item">
+      <span class="osint-status ok"></span>
+      <span class="name">US Drought Monitor</span>
+      <span class="detail">D0 - Abnormally Dry, severity 17/100</span>
+    </div>
+    <div class="osint-source-item">
+      <span class="osint-status ok"></span>
+      <span class="name">FRED Economic Data</span>
+      <span class="detail">Stress 13/100</span>
+    </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.osint-toggle').forEach(el => {
+  el.addEventListener('click', () => el.closest('.osint-panel').classList.toggle('open'));
+});
+</script>
+<!-- THREAT-MONITOR-END -->
+
+
+<div class="layout">
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar">
+  <h3>Contents</h3>
+  <a href="#threat">1. Threat Assessment</a>
+  <a href="#decision">2. Decision Framework</a>
+  <a href="#scenarios">3. Scenario Cards</a>
+  <a href="#inventory">4. Equipment Inventory</a>
+  <a href="#gaps">5. Gap Analysis</a>
+  <a href="#loadout">6. Bag Loadout</a>
+  <a href="#routes">7. Bugout Routes</a>
+  <a href="#comms">8. Communications Plan</a>
+  <a href="#rally">9. Rally Points</a>
+  <a href="#shelter">10. Shelter-in-Place</a>
+  <a href="#go">11. 60-Second Go Checklist</a>
+  <a href="#contacts">12. Emergency Contacts</a>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="content">
+
+<!-- SECTION 1: THREAT ASSESSMENT -->
+<div class="section" id="threat">
+  <h2><span class="section-number">1</span> Threat Assessment &mdash; Lincoln, NE</h2>
+  <p>Lincoln, NE has its own unique set of natural and man-made threats based on geography, climate, population density, and proximity to potential targets. Research your area's specific risks including nearby military installations, nuclear facilities, flood zones, earthquake faults, wildfire regions, and severe weather patterns. Consider proximity to [YOUR_NEARBY_TARGETS] when evaluating nuclear and infrastructure risks.</p>
+
+  <table>
+    <thead>
+      <tr><th>Threat</th><th>Likelihood</th><th>Severity</th><th>Key Concern</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Severe Storms / Tornadoes</td><td><span class="badge badge-medium">Assess</span></td><td><span class="badge badge-medium">Assess</span></td><td>Research your region's peak severe weather season and typical damage patterns</td></tr>
+      <tr><td>Extended Power Grid Failure</td><td><span class="badge badge-medium">Assess</span></td><td><span class="badge badge-high">High</span></td><td>Cold/heat exposure depending on season; no water pumps, no refrigeration</td></tr>
+      <tr><td>Carrington-type Solar Event (EMP/CME)</td><td><span class="badge badge-low">Low</span></td><td><span class="badge badge-extreme">Extreme</span></td><td>Grid collapse for weeks/months; vehicles may fail</td></tr>
+      <tr><td>Nuclear Strike</td><td><span class="badge badge-low">Low</span></td><td><span class="badge badge-extreme">Extreme</span></td><td>Assess your proximity to military bases, ICBM fields, and major metro areas</td></tr>
+      <tr><td>Food Supply Disruption</td><td><span class="badge badge-medium">Medium</span></td><td><span class="badge badge-medium">Medium</span></td><td>Grocery stores empty in 3 days; identify local agricultural resources</td></tr>
+      <tr><td>Civil Unrest / Societal Breakdown</td><td><span class="badge badge-medium">Assess</span></td><td><span class="badge badge-high">High</span></td><td>Urban density increases risk; plan relocation to rural area</td></tr>
+      <tr><td>Flooding</td><td><span class="badge badge-medium">Assess</span></td><td><span class="badge badge-medium">Assess</span></td><td>Check FEMA flood maps for your area; identify at-risk roads and bridges</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">&#9762;&#65039; Nuclear Note</div>
+    Research your proximity to military bases, ICBM silo fields, nuclear power plants, major ports, and large metro areas. Use resources like NUKEMAP (nuclearsecrecy.com/nukemap) to model blast radius and fallout patterns for your location. Determine the prevailing wind direction in your area and plan evacuation routes that move crosswind or upwind from the nearest targets. <strong>A Geiger counter is a critical asset for any nuclear scenario.</strong>
+  </div>
+</div>
+
+<!-- SECTION 2: DECISION FRAMEWORK -->
+<div class="section" id="decision">
+  <h2><span class="section-number">2</span> Decision Framework &mdash; Bug Out vs. Shelter in Place</h2>
+  <p>Not every disaster requires evacuation. Use this framework to decide quickly:</p>
+
+  <table class="decision-table">
+    <thead><tr><th>Factor</th><th>Shelter in Place &#9989;</th><th>Bug Out &#128682;</th></tr></thead>
+    <tbody>
+      <tr><td>Your home is&hellip;</td><td>Structurally sound, safe area</td><td>Damaged, in flood/fire zone, or in fallout path</td></tr>
+      <tr><td>Utilities are&hellip;</td><td>Partially working or you have backup</td><td>Down with no timeline for restoration</td></tr>
+      <tr><td>Streets are&hellip;</td><td>Blocked or impassable</td><td>Clear enough to travel (or you go on foot)</td></tr>
+      <tr><td>Threat is&hellip;</td><td>Temporary (storm, short outage)</td><td>Escalating (unrest, contamination, long-term grid failure)</td></tr>
+      <tr><td>Authorities say&hellip;</td><td>&ldquo;Shelter in place&rdquo;</td><td>&ldquo;Evacuate&rdquo; or no comms at all</td></tr>
+      <tr><td>Radiation?</td><td>No readings on Geiger counter</td><td>Rising readings &mdash; leave immediately upwind</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">Rule of Thumb</div>
+    When in doubt and you have a clear route, it is generally better to leave early than to wait too long. Leaving 6 hours ahead of everyone else is the difference between an easy drive and gridlocked highways.
+  </div>
+</div>
+
+<!-- SECTION 3: SCENARIO CARDS -->
+<div class="section" id="scenarios">
+  <h2><span class="section-number">3</span> Scenario Quick-Reference Cards</h2>
+
+  <div class="scenario-card">
+    <h4>&#9762;&#65039; Nuclear Event</h4>
+    <div class="field"><span class="field-label">Trigger:</span> Flash/EBS alert, mushroom cloud visible, or Geiger counter spiking.</div>
+    <div class="field"><span class="field-label">Action:</span> If detonation is imminent, shelter in the most interior room (basement ideal) for first 24&ndash;48 hrs to avoid initial fallout. Then bug out on your primary route, moving upwind/crosswind from the blast site. Monitor Geiger counter continuously. Seal windows/doors with plastic and tape if sheltering. Avoid rain.</div>
+    <div class="field"><span class="field-label">Timeframe:</span> Shelter 24&ndash;48 hrs, then evacuate upwind.</div>
+  </div>
+
+  <div class="scenario-card">
+    <h4>&#9889; Carrington Event / EMP</h4>
+    <div class="field"><span class="field-label">Trigger:</span> Widespread power failure, electronics dead, no cell/internet, vehicles potentially disabled.</div>
+    <div class="field"><span class="field-label">Action:</span> Shelter in place initially (days 1&ndash;3) to assess scope. Fill all containers with water immediately (pumps may fail). If grid stays down past 72 hrs, prepare to bug out. Travel may require foot/bicycle. Retrieve Faraday-protected electronics from your critical electronics case.</div>
+    <div class="field"><span class="field-label">Timeframe:</span> Shelter 1&ndash;3 days, then evaluate.</div>
+  </div>
+
+  <div class="scenario-card">
+    <h4>&#128680; Civil Unrest / Societal Breakdown</h4>
+    <div class="field"><span class="field-label">Trigger:</span> Sustained rioting, supply chains halted, law enforcement overwhelmed.</div>
+    <div class="field"><span class="field-label">Action:</span> Keep a low profile. Avoid downtown / high-density areas. If violence approaches your neighborhood, bug out using your alternate route that avoids major population centers. Travel at night if possible. Use Meshtastic for silent encrypted text comms, maintain voice radio silence.</div>
+    <div class="field"><span class="field-label">Timeframe:</span> Bug out when threat reaches your area.</div>
+  </div>
+
+  <div class="scenario-card">
+    <h4>&#127828; Food/Supply Shortage</h4>
+    <div class="field"><span class="field-label">Trigger:</span> Grocery shelves empty 3+ days, no resupply expected.</div>
+    <div class="field"><span class="field-label">Action:</span> Begin rationing stored food. Shelter in place as long as water is available. Use rocket stove for cooking. Supplement with foraged edibles (research local edible plants). If shortage extends past your food reserves with no relief and water is becoming scarce, bug out toward agricultural rural areas. Barter skills and supplies.</div>
+    <div class="field"><span class="field-label">Timeframe:</span> Shelter as long as food and water reserves hold, then evaluate. Water is the limiting factor, not food.</div>
+  </div>
+
+  <div class="scenario-card">
+    <h4>&#127786;&#65039; Severe Storm / Tornado</h4>
+    <div class="field"><span class="field-label">Trigger:</span> Tornado warning, severe damage to home.</div>
+    <div class="field"><span class="field-label">Action:</span> Shelter in place (basement/interior room) during storm. If home is destroyed, deploy survival tents and assess. Typically short-duration &mdash; await emergency services. Bug out only if infrastructure is catastrophically damaged.</div>
+    <div class="field"><span class="field-label">Timeframe:</span> Shelter during event; reassess after.</div>
+  </div>
+
+  <div class="scenario-card">
+    <h4>&#10052;&#65039; Extended Power Outage (Winter)</h4>
+    <div class="field"><span class="field-label">Trigger:</span> Ice storm or grid failure; no heat in dangerous temps.</div>
+    <div class="field"><span class="field-label">Action:</span> Insulate one room, use sleeping bags/thermal blankets. Use rocket stove for heat (with ventilation!). Melt snow for water if pipes freeze. Use tealight candles for supplemental light and warmth. If outage extends past 5&ndash;7 days in dangerous conditions, bug out toward your designated destination.</div>
+    <div class="field"><span class="field-label">Timeframe:</span> Shelter up to 1 week; bug out if worsening.</div>
+  </div>
+</div>
+
+<!-- SECTION 4: EQUIPMENT INVENTORY -->
+<div class="section" id="inventory">
+  <h2><span class="section-number">4</span> Current Equipment Inventory</h2>
+
+  <div class="callout callout-info">
+    <div class="callout-title">&#128230; Build Your Inventory</div>
+    Add your equipment using the form above each category. Items are saved in your browser's local storage. Click any cell in any row to edit it. Use the category tables below to organize your gear.
+  </div>
+
+  <h3>Carry &amp; Transport</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Communications</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Shelter &amp; Warmth</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Fire &amp; Cooking</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Water</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Tools &amp; Blades</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Power</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Detection &amp; Optics</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>EMP / Faraday Protection</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Light</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Food</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Navigation</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Cordage &amp; Repair</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Medical &amp; Hygiene</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>Knowledge &amp; Reference</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Notes</th></tr></thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 5: GAP ANALYSIS -->
+<div class="section" id="gaps">
+  <h2><span class="section-number">5</span> Gap Analysis &amp; Recommended Categories</h2>
+  <p>Use this checklist to evaluate your preparedness across all critical categories. Research specific products and prices for your needs and budget.</p>
+
+  <table>
+    <thead><tr><th>Category</th><th>What to Look For</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr><td>Food</td><td>72-hour freeze-dried meals per person for bugout bags. Separate shelf-stable bulk food (rice, beans) for shelter-in-place. Lightweight, calorie-dense options for go-bags.</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Water</td><td>Personal water filters, purification tablets, collapsible containers. Plan for 1 gallon per person per day minimum. Consider gravity filters for base camp use.</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Medical (Trauma)</td><td>IFAK with tourniquet, hemostatic gauze, pressure bandage, chest seal, nitrile gloves, medical tape, EMT shears. Take a Stop the Bleed class.</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Medical (OTC)</td><td>Pain relievers (ibuprofen, acetaminophen), antihistamines, anti-diarrheal, electrolyte packets, personal prescriptions (90-day supply), moleskin, antibiotic ointment.</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+      <tr><td>Navigation</td><td>Regional topographic map (waterproof), state/county road maps, compass (one per person). Practice map and compass navigation without GPS.</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Light</td><td>Rechargeable headlamps (one per person) for hands-free night travel. Tealight candles for shelter-in-place. Backup batteries or solar charging capability.</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Power</td><td>Foldable solar panels, high-capacity power banks, car power inverter, rechargeable batteries, charging cables. Build redundancy across solar, battery, and vehicle power.</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Documents</td><td>Waterproof copies of IDs, insurance policies, property deeds, medical info, emergency contacts, account numbers. Store originals in a waterproof container.</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Hygiene</td><td>Toilet paper, wet wipes, hand sanitizer, trash bags, bar soap, toothbrush/paste, quick-dry towels.</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+      <tr><td>Defense</td><td>Appropriate deterrents based on your training, comfort level, and local laws. Knives, pepper spray, or firearms with proper training.</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+      <tr><td>Clothing</td><td>Extra socks (2 pair), underwear, base layer, rain poncho, warm hat, work gloves per bag. Dress for your climate's worst season.</td><td><span class="badge badge-medium">MEDIUM</span></td></tr>
+      <tr><td>Cash</td><td>$200&ndash;500 in small bills ($1, $5, $10, $20). ATMs and card readers won't work if power or networks are down.</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Cordage &amp; Repair</td><td>550 paracord (100ft minimum), duct tape, zip ties, sewing kit. Multi-strand paracord with fire tinder core is ideal.</td><td><span class="badge badge-low">LOW</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-success">
+    <div class="callout-title">&#127942; Key Wins to Aim For</div>
+    Multi-tier comms redundancy (encrypted mesh text + voice radio + backup walkies + cell-dependent + receive-only). Multi-layer power (solar + power banks + vehicle power). Faraday-protected electronics spares. Enough shelf-stable food to extend shelter-in-place from days to weeks.
+  </div>
+</div>
+
+<!-- SECTION 6: BAG LOADOUT -->
+<div class="section" id="loadout">
+  <h2><span class="section-number">6</span> Bugout Bag Loadout (Per Person)</h2>
+  <p>Each tactical backpack (40&ndash;50L recommended) should be packed and ready to grab. Heavier items go low and close to your back. Each person carries independent 72-hour survival capability.</p>
+
+  <div class="loadout-grid">
+    <div class="loadout-card">
+      <h4>&#127890; Bag 1 &mdash; Nav / Comms / Electronics Lead</h4>
+      <table>
+        <tr><td><strong>Main</strong></td><td>72-hr food rations, utensil kit, collapsible water container, clothing, rain poncho</td></tr>
+        <tr><td><strong>Secondary</strong></td><td>Survival tent, fire starter, portable stove, cutting tools</td></tr>
+        <tr><td><strong>Top/Admin</strong></td><td>Regional map + road maps + compass, knife, headlamp, binoculars, handheld radio, Meshtastic node (GPS)</td></tr>
+        <tr><td><strong>MOLLE ext.</strong></td><td>Water bottle + water filter, solar panel (clipped to charge while walking)</td></tr>
+        <tr><td><strong>MOLLE side</strong></td><td>Hand-crank radio, backup radio, multitool, compressed towels</td></tr>
+        <tr><td><strong>Hip belt</strong></td><td>Cash (half), lighter, snack bars, backup walkie-talkie</td></tr>
+        <tr><td><strong>Side</strong></td><td>Survival manual, foraging reference book</td></tr>
+        <tr><td><strong>Internal</strong></td><td>Electronics repair tools (soldering iron, multimeter), car power inverter</td></tr>
+        <tr><td><strong>Wrist</strong></td><td>Smartwatch (LTE if available)</td></tr>
+        <tr><td><strong>Carried</strong></td><td>High-capacity solar power bank</td></tr>
+      </table>
+    </div>
+    <div class="loadout-card">
+      <h4>&#129658; Bag 2 &mdash; Medical / Support Lead</h4>
+      <table>
+        <tr><td><strong>Main</strong></td><td>72-hr food rations, cooking set, collapsible water containers, clothing, rain poncho, hygiene kit</td></tr>
+        <tr><td><strong>Secondary</strong></td><td>Backup solar panel, paracord, camping towels</td></tr>
+        <tr><td><strong>Top/Admin</strong></td><td>IFAK, all medications, water filter, headlamp, handheld radio, Meshtastic node (GPS), radiation detector</td></tr>
+        <tr><td><strong>MOLLE ext.</strong></td><td>Water bottle + water filter</td></tr>
+        <tr><td><strong>MOLLE side</strong></td><td>Hand-crank radio, backup radio, multitool, survival tent, cutting tools, compass, compressed towels</td></tr>
+        <tr><td><strong>Hip belt</strong></td><td>Cash (half), ID copies, emergency card, backup walkie-talkie</td></tr>
+        <tr><td><strong>Side</strong></td><td>Survival manual, knife, road maps</td></tr>
+        <tr><td><strong>Internal</strong></td><td>Medicine bag (antibiotic ointment, snack bars), fire starters</td></tr>
+        <tr><td><strong>Wrist</strong></td><td>Smartwatch (GPS-capable)</td></tr>
+        <tr><td><strong>Carried</strong></td><td>High-capacity solar power bank</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>Critical Electronics Case</h3>
+  <p>Smaller hard case (waterproof, wheeled recommended). Rides in the car or on top of the wagon. Use a lid organizer for documents and flat items.</p>
+  <ul>
+    <li>Radiation detector / Geiger counter (padded)</li>
+    <li>Meshtastic relay node</li>
+    <li>Spare radio batteries and charging cables</li>
+    <li>Rechargeable batteries + USB charger holders</li>
+    <li>USB power tester / multimeter</li>
+    <li>Hand-crank radio</li>
+    <li>Important documents &mdash; originals in waterproof bags</li>
+    <li>Backup medications</li>
+    <li>Precision screwdriver set</li>
+  </ul>
+
+  <div class="faraday-box">
+    <div class="label">&#9889; Faraday Protection</div>
+    Store critical electronics in Faraday bags inside your hard cases. <strong>Keep at least one handheld radio, one Meshtastic node, and your Geiger counter in individual Faraday bags at all times.</strong> Use remaining bags for: spare rechargeable batteries, relay nodes, and a phone or laptop. If an EMP kills your active devices, these protected spares become your most valuable assets.
+  </div>
+
+  <h3>Bulk Gear Case</h3>
+  <p>Larger hard case (waterproof, wheeled recommended). Rides in the vehicle. Contains overflow and heavy items:</p>
+  <ul>
+    <li>Large solar panel (folded)</li>
+    <li>Extra collapsible water container</li>
+    <li>Hand-crank radio (backup)</li>
+    <li>Tealight candles (portion of supply)</li>
+    <li>Extra food and snack bars</li>
+    <li>Trekking poles (collapsed)</li>
+    <li>Seasonal clothing, blankets, sleeping bags</li>
+    <li>Any firearms and ammunition</li>
+    <li>Duct tape, extra paracord, zip ties</li>
+    <li>Backup repair tools</li>
+    <li>Fast-charging cable</li>
+  </ul>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Vehicle Load Plan</div>
+    Both backpacks in back seat (grab-and-go). Critical electronics case + bulk gear case in trunk/bed. Wagon on top or in bed. <strong>If you must abandon the vehicle:</strong> grab both packs + critical electronics case, load on wagon, walk. The bulk gear case is &ldquo;nice to have&rdquo; &mdash; leave it if you must.
+  </div>
+</div>
+
+<!-- SECTION 7: ROUTES -->
+<div class="section" id="routes">
+  <h2><span class="section-number">7</span> Bugout Routes &amp; Destinations</h2>
+  <p>All routes originate from Lincoln, NE. Primary direction: <strong>away from population centers and known targets</strong> toward low-density rural areas with natural water sources.</p>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">Key Principle</div>
+    <strong>Avoid major metro areas and known military/nuclear targets.</strong> All routes should move away from the highest-population and highest-threat areas near you. Identify the largest population center nearby and ensure all routes go in the opposite direction.
+  </div>
+
+  <div class="route-card route-alpha">
+    <h4><span class="badge badge-primary">PRIMARY</span> Route Alpha &mdash; Primary Bugout Route</h4>
+    <p><strong>Path:</strong> <span class="fill-in">[YOUR PRIMARY ROUTE: list highways, roads, and direction]</span></p>
+    <p><strong>Distance:</strong> <span class="fill-in">[X]</span> miles &nbsp;|&nbsp; <strong>Drive:</strong> <span class="fill-in">[X]</span> hours &nbsp;|&nbsp; <strong>On foot:</strong> <span class="fill-in">[X]</span> days at 15&ndash;20 mi/day</p>
+    <p><strong>Why:</strong> <span class="fill-in">[Why this route? Low population, water access, distance from targets, etc.]</span></p>
+    <p><strong>Waypoints:</strong> <span class="fill-in">[List towns/landmarks at regular intervals for progress tracking and resupply]</span></p>
+    <p style="color:var(--accent2); font-size:0.85rem;"><strong>Meshtastic:</strong> At each waypoint, share GPS positions. GPS pings confirm location without voice radio transmission.</p>
+  </div>
+
+  <div class="route-card route-bravo">
+    <h4><span class="badge badge-alternate">ALTERNATE</span> Route Bravo &mdash; Alternate Bugout Route</h4>
+    <p><strong>Path:</strong> <span class="fill-in">[YOUR ALTERNATE ROUTE: different direction, avoids highways that may gridlock]</span></p>
+    <p><strong>Distance:</strong> <span class="fill-in">[X]</span> miles &nbsp;|&nbsp; <strong>Drive:</strong> <span class="fill-in">[X]</span> hours</p>
+    <p><strong>Why:</strong> <span class="fill-in">[Why this alternate? Avoids interstates, different direction from primary, water source along route, etc.]</span></p>
+    <p><strong>Waypoints:</strong> <span class="fill-in">[List towns/landmarks]</span></p>
+  </div>
+
+  <div class="route-card route-charlie">
+    <h4><span class="badge badge-foot">ON FOOT</span> Route Charlie &mdash; Foot/Bicycle Route</h4>
+    <p><strong>Path:</strong> <span class="fill-in">[YOUR FOOT ROUTE: trails, bike paths, rural roads that avoid major highways]</span></p>
+    <p><strong>Distance:</strong> <span class="fill-in">[X]</span> miles to true rural isolation</p>
+    <p><strong>Why:</strong> If roads are impassable or vehicles disabled (EMP). Trail systems avoid major roads. First objective: get 30+ miles from your city into agricultural/rural land.</p>
+    <p style="color:var(--accent2); font-size:0.85rem;"><strong>Meshtastic:</strong> Use silent encrypted text instead of voice radio for low-profile movement. AES-256 encrypted by default.</p>
+  </div>
+
+  <h3>Destination Criteria</h3>
+  <ul>
+    <li>Low population &mdash; under 500, ideally under 100</li>
+    <li>Water access &mdash; river, creek, windmill-fed stock tank, or shallow aquifer</li>
+    <li>Tree cover or terrain &mdash; breaks line of sight, provides firewood</li>
+    <li>Off major highways &mdash; avoids refugee traffic flows</li>
+    <li>Agricultural land nearby &mdash; foraging, barter with ranchers</li>
+  </ul>
+  <div class="callout callout-info">
+    <div class="callout-title">Long-term Suggestion</div>
+    Scout your destination region on a weekend trip. Identify specific locations &mdash; national forests, BLM land, or build a relationship with a rural landowner. A specific destination makes your plan 10&times; more effective.
+  </div>
+</div>
+
+<!-- SECTION 8: COMMUNICATIONS -->
+<div class="section" id="comms">
+  <h2><span class="section-number">8</span> Communications Plan</h2>
+  <p>Five-tier comms system with built-in redundancy. Use the highest-capability system available and fall back as needed.</p>
+
+  <div class="tier-card">
+    <div class="tier-badge tier-1">Tier 1 &mdash; Primary</div>
+    <h3 style="margin-top:0.25rem;">Meshtastic LoRa Mesh Network (Encrypted Text + GPS)</h3>
+    <p>Your most tactically valuable comms system. <strong>Encrypted text messaging and GPS position sharing</strong> over 915MHz LoRa with zero infrastructure required.</p>
+
+    <h4>Hardware</h4>
+    <ul>
+      <li><strong>Meshtastic handheld nodes</strong> &mdash; LoRa + GPS + BT + OLED display. One per person.</li>
+      <li><strong>Meshtastic relay node</strong> &mdash; Deploy at rally points to extend mesh range.</li>
+    </ul>
+
+    <h4>Capabilities</h4>
+    <ul>
+      <li><strong>Encrypted messaging:</strong> AES-256 by default. Comms are private.</li>
+      <li><strong>GPS position sharing:</strong> See your team's exact location on OLED or phone app.</li>
+      <li><strong>Mesh relay:</strong> Deploy relay node at rally point as repeater with store-and-forward.</li>
+      <li><strong>Range:</strong> 1&ndash;5 mi urban, 10+ mi line-of-sight. Flat terrain extends range significantly.</li>
+      <li><strong>Silent operation:</strong> No voice transmission for others to hear.</li>
+      <li><strong>Battery life:</strong> Days of standby with periodic GPS pings.</li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">Setup &mdash; Do This Now</div>
+      <ol>
+        <li>Flash all devices with Meshtastic firmware (meshtastic.org)</li>
+        <li>Set all devices to the same encryption key (shared channel + strong PSK)</li>
+        <li>Configure handheld nodes as &ldquo;Client&rdquo; role with GPS enabled</li>
+        <li>Configure relay node as &ldquo;Router&rdquo; role (relay, saves battery)</li>
+        <li>Set GPS broadcast interval to 15 minutes</li>
+        <li>Pair each handheld node to phones via Bluetooth</li>
+        <li>Test range in your neighborhood and along bugout routes</li>
+        <li>Store relay node in Faraday protection in your critical electronics case</li>
+      </ol>
+    </div>
+
+    <h4>Tactical Use</h4>
+    <ul>
+      <li><strong>Normal movement:</strong> All team members carry nodes powered on. GPS pings every 15 min.</li>
+      <li><strong>Separation:</strong> Text your status and heading &mdash; all encrypted.</li>
+      <li><strong>Rally point relay:</strong> Deploy relay node at rally point. Relays messages even when you've moved on.</li>
+      <li><strong>Stealth:</strong> Voice-radio-silent in civil unrest. Meshtastic only &mdash; encrypted, inaudible.</li>
+    </ul>
+  </div>
+
+  <div class="tier-card">
+    <div class="tier-badge tier-2">Tier 2 &mdash; Voice</div>
+    <h3 style="margin-top:0.25rem;">Handheld Dual-Band Radio (VHF/UHF)</h3>
+    <p>4&ndash;8W output. Range: 5+ mi urban, 10&ndash;20 mi open terrain.</p>
+    <h4>Pre-programmed Frequencies</h4>
+    <ul>
+      <li>Private simplex freq for team comms (choose an uncommon frequency)</li>
+      <li>NOAA Weather: <span class="fill-in">[Your local NOAA freq &mdash; check weather.gov]</span></li>
+      <li>FRS Channel 1: 462.5625 MHz (to talk to backup walkies)</li>
+      <li>Local amateur repeaters (check repeaterbook.com for your area)</li>
+      <li>146.520 MHz (national calling freq &mdash; monitor only)</li>
+    </ul>
+    <h4>Code Words</h4>
+    <table>
+      <tr><td><strong style="color:var(--green);">Green</strong></td><td>All clear, safe</td></tr>
+      <tr><td><strong style="color:var(--yellow);">Yellow</strong></td><td>Caution, potential threat nearby</td></tr>
+      <tr><td><strong style="color:var(--red);">Red</strong></td><td>Immediate danger, need help</td></tr>
+      <tr><td><strong style="color:var(--accent2);">Rally</strong></td><td>Head to designated rally point</td></tr>
+      <tr><td><strong style="color:var(--purple);">Alpha / Bravo / Charlie</strong></td><td>Which route you're taking</td></tr>
+    </table>
+    <p style="font-size:0.85rem;"><strong>Radio discipline:</strong> Transmissions under 10 seconds. Never broadcast location, names, or plans. Prefer Meshtastic text over voice whenever possible.</p>
+    <div class="callout callout-info">
+      <div class="callout-title">Get Licensed Now</div>
+      FCC Technician license: ~$15, 35 multiple-choice questions. Lets you practice legally and learn your local repeater network. In a true life-threatening emergency, FCC rules allow unlicensed transmission on any frequency.
+    </div>
+  </div>
+
+  <div class="tier-card">
+    <div class="tier-badge tier-3">Tier 3 &mdash; Backup Voice</div>
+    <h3 style="margin-top:0.25rem;">FRS Walkie-Talkies</h3>
+    <ul>
+      <li>Simpler to use &mdash; FRS channels 1&ndash;22, no license</li>
+      <li>Range: 1&ndash;2 miles typical</li>
+      <li>Choose a primary channel and backup channel</li>
+      <li>Good for short-range team coordination</li>
+    </ul>
+  </div>
+
+  <div class="tier-card">
+    <div class="tier-badge tier-4">Tier 4 &mdash; Cell-Dependent</div>
+    <h3 style="margin-top:0.25rem;">Smartphones &amp; Smartwatches (LTE)</h3>
+    <ul>
+      <li>LTE smartwatch: calls/texts without phone if cell towers are up</li>
+      <li>GPS tracking regardless of cell service</li>
+      <li>Battery ~24 hrs &mdash; conserve for when needed</li>
+      <li>Not a primary comms tool &mdash; useful in partial-infrastructure situations</li>
+    </ul>
+  </div>
+
+  <div class="tier-card">
+    <div class="tier-badge tier-5">Tier 5 &mdash; Receive Only</div>
+    <h3 style="margin-top:0.25rem;">Hand-Crank Emergency Radios</h3>
+    <ul>
+      <li>AM/FM/NOAA &mdash; zero batteries or charging needed</li>
+      <li>Your lifeline for official broadcasts and weather alerts</li>
+      <li>One per hard case recommended</li>
+      <li>Crank 1 minute = ~15&ndash;30 minutes listening</li>
+    </ul>
+  </div>
+
+  <h3>If All Electronics Are Dead (EMP/Carrington)</h3>
+  <ul>
+    <li>Retrieve Faraday-protected electronics from your critical electronics case</li>
+    <li>Meshtastic works without phones &mdash; handheld nodes have built-in OLED screen for messages and GPS</li>
+    <li>Fall back to pre-agreed rally points (Section 9)</li>
+    <li>Leave physical signals: bright cloth tied to a visible spot = &ldquo;I was here, heading to next point&rdquo;</li>
+    <li>Hand-crank radios should survive EMP (simple circuits) &mdash; monitor broadcasts</li>
+  </ul>
+</div>
+
+<!-- SECTION 9: RALLY POINTS -->
+<div class="section" id="rally">
+  <h2><span class="section-number">9</span> Rally Points &amp; Rendezvous Protocol</h2>
+  <p>If your team is separated when an event occurs, use these pre-agreed meeting points:</p>
+
+  <table>
+    <thead><tr><th>Priority</th><th>Rally Point</th><th>When to Use</th><th>Wait Time</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1st</strong></td><td><span class="fill-in">[Your home address or description]</span></td><td>Default if event is minor</td><td>Up to 2 hours</td></tr>
+      <tr><td><strong>2nd</strong></td><td><span class="fill-in">[Choose a landmark within 5 mi]</span></td><td>If home is unsafe</td><td>1 hour; check every 4 hrs for 24 hrs</td></tr>
+      <tr><td><strong>3rd</strong></td><td><span class="fill-in">[Choose a point on your primary route]</span></td><td>If already left the city separately</td><td>2 hours; leave marker &amp; proceed</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-info">
+    <div class="callout-title">Meshtastic Relay at Rally Points</div>
+    If you reach a rally point and your team hasn't arrived, deploy the relay node. Power it on, hide it in a protected spot. It relays messages when they come into range, even if you've moved on. Leave a physical marker too.
+  </div>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">&#9888;&#65039; Action Required</div>
+    Fill in the specific locations above with your team. Pick places everyone knows. <strong>Memorize them.</strong> Don't rely on having this document with you.
+  </div>
+</div>
+
+<!-- SECTION 10: SHELTER IN PLACE -->
+<div class="section" id="shelter">
+  <h2><span class="section-number">10</span> Shelter-in-Place Plan</h2>
+  <p>For scenarios where staying home is the right call (short-term outage, storm, early-stage food shortage).</p>
+
+  <h3>Immediate Actions (First 2 Hours)</h3>
+  <ul>
+    <li>Fill bathtub(s), all collapsible containers, and every vessel with water (water pressure may fail)</li>
+    <li>Charge all devices &mdash; phones, radios, Meshtastic nodes, walkies, Geiger counter, power banks &mdash; using solar panel if power is already out</li>
+    <li>Gather bugout bags to one staging area near the door (ready to go if situation changes)</li>
+    <li>Check Geiger counter if nuclear event is possible</li>
+    <li>Power on Meshtastic devices &mdash; monitor for messages from neighbors or other mesh users in range</li>
+    <li>Lock doors, close blinds, maintain a low profile</li>
+    <li>Tune to NOAA weather radio or AM radio for emergency broadcasts</li>
+    <li>Light tealight candles for room lighting if power is out (conserve battery-powered lights for mobile use)</li>
+  </ul>
+
+  <h3>Days 1&ndash;3: Assessment Phase</h3>
+  <ul>
+    <li>Ration food and water &mdash; inventory your reserves and calculate how many days they cover</li>
+    <li>Begin cooking bulk staples with rocket stove outdoors (ventilation!) using collected wood/debris &mdash; cook in bulk, store cooked portions</li>
+    <li>Establish a watch schedule (one person sleeps, one watches)</li>
+    <li>Monitor radio on local repeater frequencies and NOAA via crank radio for situation updates</li>
+    <li>Keep Meshtastic active &mdash; other mesh users in your area may relay valuable local information</li>
+    <li>Use power banks for overnight device charging, recharge banks via solar during the day</li>
+    <li>Avoid unnecessary trips outside</li>
+  </ul>
+
+  <h3>Days 3&ndash;7+: Extended Shelter Phase</h3>
+  <ul>
+    <li>If situation is stable but infrastructure is down, sustain on your food reserves</li>
+    <li>Supplement staples with any available pantry items, canned goods, foraged edibles (research local edible plants)</li>
+    <li>Manage water carefully &mdash; this is your limiting factor, not food. Purify all non-tap water with filters</li>
+    <li>If power inverter is available and a vehicle battery is charged, use it to run small electronics</li>
+    <li>Continue monitoring all comms channels for situation updates</li>
+    <li>Track your food reserves &mdash; begin bugout planning when you're at 50% (gives margin for travel)</li>
+  </ul>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">Set Tripwire Conditions</div>
+    Agree with your team on automatic bugout triggers: e.g., &ldquo;if we hear gunfire within 1 mile, we leave&rdquo; or &ldquo;if water is gone and no resupply in 48 hours, we go&rdquo; &mdash; don't wait until it's too late.
+  </div>
+</div>
+
+<!-- SECTION 11: GO CHECKLIST -->
+<div class="section" id="go">
+  <h2><span class="section-number">11</span> 60-Second Go Checklist</h2>
+  <p>When it's time to leave <strong>right now</strong>, grab these in order:</p>
+
+  <ol class="checklist">
+    <li><strong>Backpacks</strong> (pre-packed, staged by door) &mdash; one on each person</li>
+    <li><strong>Critical electronics case</strong> (Geiger counter, Meshtastic relay, documents, electronics)</li>
+    <li><strong>Radios</strong> &mdash; one each, confirm on your private frequency</li>
+    <li><strong>Meshtastic nodes</strong> &mdash; one each, confirm powered on with GPS fix</li>
+    <li><strong>Car keys, phones, wallets, watches on wrists</strong></li>
+    <li>Fill collapsible containers with water if time allows (60 sec at the tap)</li>
+    <li>Grab any last medications from fridge/cabinet</li>
+    <li>Load bulk gear case, wagon, and water into vehicle</li>
+    <li>Confirm verbally: <strong>&ldquo;Route _____, destination _____, rally point _____.&rdquo;</strong></li>
+    <li><strong>Lock house and go</strong></li>
+  </ol>
+
+  <div class="callout callout-info">
+    <div class="callout-title">If You Have 15&ndash;30 Minutes</div>
+    Also grab: blankets/sleeping bags, extra food from pantry, fill ALL collapsible containers, pet supplies if applicable, USB drive with photos, tealight candles in a ziplock. Check Geiger counter readings before choosing your route.
+  </div>
+</div>
+
+<!-- SECTION 12: CONTACTS -->
+<div class="section" id="contacts">
+  <h2><span class="section-number">12</span> Emergency Contacts &amp; Frequencies</h2>
+
+  <table>
+    <thead><tr><th>Contact / Resource</th><th>Number / Frequency</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>911 (Local emergency)</td><td>911</td><td>May be overwhelmed or down</td></tr>
+      <tr><td>County Emergency Management</td><td><span class="fill-in">[Fill in]</span></td><td>Your county's emergency office</td></tr>
+      <tr><td>State Emergency Management Agency</td><td><span class="fill-in">[Fill in]</span></td><td>State-level coordination</td></tr>
+      <tr><td>NOAA Weather Radio</td><td><span class="fill-in">[Your local NOAA freq &mdash; see weather.gov/nwr]</span></td><td>Continuous weather/emergency broadcasts</td></tr>
+      <tr><td>Out-of-state contact</td><td><span class="fill-in">[Fill in]</span></td><td>Everyone on your team memorizes this number</td></tr>
+      <tr><td>Private Simplex (primary voice)</td><td><span class="fill-in">[Program]</span></td><td>Primary voice comms between team members</td></tr>
+      <tr><td>Backup Voice Frequency</td><td><span class="fill-in">[Program]</span></td><td>If primary is compromised</td></tr>
+      <tr><td>Local HAM Repeater</td><td><span class="fill-in">[repeaterbook.com]</span></td><td>Connect with local HAM community</td></tr>
+      <tr><td>FRS Channel (backup walkies)</td><td><span class="fill-in">[Choose]</span></td><td>Backup walkie-talkie channel</td></tr>
+      <tr><td>Meshtastic Channel</td><td><span class="fill-in">[Channel + PSK]</span></td><td>Encrypted mesh text</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">&#128424; Print This Page</div>
+    Keep one copy in each bugout bag and one in your critical electronics case. Electronics may not be available when you need this information most.
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p><strong>Bugout &amp; Disaster Plan &mdash; Lincoln, NE &mdash; Last updated [DATE]</strong></p>
+  <p>Review and update this plan every 6 months. Practice your routes. Discuss with your team regularly.</p>
+  <p style="margin-top:1rem; font-size:1.1rem;"><em>Prepared is not paranoid.</em></p>
+</div>
+
+</main>
+</div>
+
+<!-- Active sidebar link highlighting -->
+<script>
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const id = entry.target.getAttribute('id');
+        const activeLink = document.querySelector(`.sidebar a[href="#${id}"]`);
+        if (activeLink) activeLink.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-120px 0px -60% 0px' });
+
+  sections.forEach(section => observer.observe(section));
+</script>
+
+<!-- ===== INVENTORY MANAGER & RALLY POINT EDITOR ===== -->
+<script>
+// ── Feature 1: Equipment Inventory Manager ──
+(function() {
+  const STORAGE_KEY = 'bugout-inventory';
+  const section = document.getElementById('inventory');
+  if (!section) return;
+
+  // Build category map: h3 text → next sibling table
+  const categoryMap = {};
+  const categoryNames = [];
+  section.querySelectorAll('h3').forEach(h3 => {
+    const name = h3.textContent.trim();
+    let el = h3.nextElementSibling;
+    while (el && el.tagName !== 'TABLE') el = el.nextElementSibling;
+    if (el) {
+      categoryMap[name] = el;
+      categoryNames.push(name);
+    }
+  });
+
+  // Load stored items
+  function loadItems() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function saveItems(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }
+
+  // Render a single user-added item into its category table
+  function renderItem(item) {
+    const table = categoryMap[item.category];
+    if (!table) return;
+    let tbody = table.querySelector('tbody');
+    if (!tbody) { tbody = document.createElement('tbody'); table.appendChild(tbody); }
+
+    const tr = document.createElement('tr');
+    tr.className = 'user-added';
+    tr.dataset.id = item.id;
+
+    const tdName = document.createElement('td');
+    tdName.className = 'editable-cell';
+    tdName.dataset.field = 'name';
+    tdName.textContent = item.name;
+    tr.appendChild(tdName);
+
+    const tdQty = document.createElement('td');
+    tdQty.className = 'editable-cell';
+    tdQty.dataset.field = 'qty';
+    tdQty.textContent = item.qty;
+    tr.appendChild(tdQty);
+
+    const tdNotes = document.createElement('td');
+    tdNotes.className = 'editable-cell';
+    tdNotes.dataset.field = 'notes';
+    const notesSpan = document.createElement('span');
+    notesSpan.textContent = item.notes || '';
+    tdNotes.appendChild(notesSpan);
+    const btnDel = document.createElement('button');
+    btnDel.className = 'btn-delete';
+    btnDel.textContent = '\u2715';
+    btnDel.title = 'Remove item';
+    tdNotes.appendChild(btnDel);
+    tr.appendChild(tdNotes);
+
+    tbody.appendChild(tr);
+  }
+
+  // ── Static row edits (persisted separately) ──
+  const STATIC_EDITS_KEY = 'bugout-inventory-edits';
+  function loadStaticEdits() {
+    try { return JSON.parse(localStorage.getItem(STATIC_EDITS_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  function saveStaticEdits(edits) {
+    localStorage.setItem(STATIC_EDITS_KEY, JSON.stringify(edits));
+  }
+
+  // Assign IDs to all static rows and make cells editable
+  let staticRowIdx = 0;
+  section.querySelectorAll('table tbody tr:not(.user-added)').forEach(tr => {
+    const rowId = 'static_' + staticRowIdx++;
+    tr.dataset.staticId = rowId;
+    tr.querySelectorAll('td').forEach((td, colIdx) => {
+      td.classList.add('editable-cell');
+      td.dataset.col = colIdx;
+    });
+  });
+
+  // Apply saved static edits on load
+  const savedStaticEdits = loadStaticEdits();
+  for (const [rowId, cols] of Object.entries(savedStaticEdits)) {
+    const tr = section.querySelector(`tr[data-static-id="${rowId}"]`);
+    if (!tr) continue;
+    tr.classList.add('static-edited');
+    for (const [colIdx, value] of Object.entries(cols)) {
+      const td = tr.querySelectorAll('td')[parseInt(colIdx)];
+      if (td) td.textContent = value;
+    }
+  }
+
+  // Unified click-to-edit handler for ALL rows in inventory
+  section.addEventListener('click', function(e) {
+    const td = e.target.closest('#inventory td.editable-cell');
+    if (!td || td.querySelector('.inline-edit')) return;
+    if (e.target.closest('.btn-delete')) return;
+
+    const tr = td.closest('tr');
+    const isUserAdded = tr.classList.contains('user-added');
+    const isStatic = tr.dataset.staticId !== undefined;
+
+    // Get current text (handle notes cell with span + delete button)
+    let currentVal;
+    const deleteBtn = td.querySelector('.btn-delete');
+    if (deleteBtn) {
+      const span = td.querySelector('span');
+      currentVal = span ? span.textContent.trim() : '';
+    } else {
+      currentVal = td.textContent.trim();
+    }
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'inline-edit';
+    input.value = currentVal;
+
+    td.textContent = '';
+    td.appendChild(input);
+    input.focus();
+    input.select();
+
+    function saveEdit() {
+      const newVal = input.value.trim() || currentVal;
+
+      if (isUserAdded) {
+        // Save to user-added items
+        const id = tr.dataset.id;
+        const field = td.dataset.field;
+        const items = loadItems();
+        const item = items.find(i => i.id === id);
+        if (item && field) { item[field] = newVal; saveItems(items); }
+      } else if (isStatic) {
+        // Save to static edits
+        const rowId = tr.dataset.staticId;
+        const colIdx = td.dataset.col;
+        const edits = loadStaticEdits();
+        if (!edits[rowId]) edits[rowId] = {};
+        edits[rowId][colIdx] = newVal;
+        saveStaticEdits(edits);
+        tr.classList.add('static-edited');
+      }
+
+      // Rebuild the cell
+      td.textContent = '';
+      if (deleteBtn) {
+        const span = document.createElement('span');
+        span.textContent = newVal;
+        td.appendChild(span);
+        const btn = document.createElement('button');
+        btn.className = 'btn-delete';
+        btn.textContent = '\u2715';
+        btn.title = 'Remove item';
+        td.appendChild(btn);
+      } else {
+        td.textContent = newVal;
+      }
+    }
+
+    function cancelEdit() {
+      td.textContent = '';
+      if (deleteBtn) {
+        const span = document.createElement('span');
+        span.textContent = currentVal;
+        td.appendChild(span);
+        const btn = document.createElement('button');
+        btn.className = 'btn-delete';
+        btn.textContent = '\u2715';
+        btn.title = 'Remove item';
+        td.appendChild(btn);
+      } else {
+        td.textContent = currentVal;
+      }
+    }
+
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keydown', function(ev) {
+      if (ev.key === 'Enter') { input.removeEventListener('blur', saveEdit); saveEdit(); }
+      if (ev.key === 'Escape') { input.removeEventListener('blur', saveEdit); cancelEdit(); }
+    });
+  });
+
+  // Build the add-item form
+  const form = document.createElement('div');
+  form.className = 'inventory-form';
+  form.innerHTML = `
+    <input type="text" name="item-name" placeholder="Item name" autocomplete="off">
+    <input type="text" name="item-qty" placeholder="Qty" autocomplete="off">
+    <select name="item-category">
+      <option value="" disabled selected>Category\u2026</option>
+      ${categoryNames.map(c => `<option value="${c}">${c}</option>`).join('')}
+    </select>
+    <input type="text" name="item-notes" placeholder="Notes (optional)" autocomplete="off">
+    <button type="button">+ Add Item</button>
+  `;
+
+  // Insert form after the h2
+  const h2 = section.querySelector('h2');
+  if (h2) h2.after(form);
+
+  // Add help hint
+  const hint = document.createElement('div');
+  hint.style.cssText = 'font-size:0.72rem;color:var(--text-dim);margin:-1rem 0 1.5rem;padding:0 0.25rem;';
+  hint.innerHTML = '\uD83D\uDCA1 <strong>Click any cell</strong> in any row to edit it (name, quantity, or notes). Press Enter to save, Escape to cancel. Edited rows show a <span style="color:var(--purple);">purple</span> border. New items show a <span style="color:var(--accent2);">blue</span> border.';
+  form.after(hint);
+
+  // Add button handler
+  form.querySelector('button').addEventListener('click', function() {
+    const nameInput = form.querySelector('[name="item-name"]');
+    const qtyInput = form.querySelector('[name="item-qty"]');
+    const catSelect = form.querySelector('[name="item-category"]');
+    const notesInput = form.querySelector('[name="item-notes"]');
+
+    const name = nameInput.value.trim();
+    const qty = qtyInput.value.trim();
+    const category = catSelect.value;
+
+    if (!name) { nameInput.focus(); return; }
+    if (!qty) { qtyInput.focus(); return; }
+    if (!category) { catSelect.focus(); return; }
+
+    const item = {
+      id: 'inv_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      name: name,
+      qty: qty,
+      category: category,
+      notes: notesInput.value.trim(),
+      added: new Date().toISOString()
+    };
+
+    const items = loadItems();
+    items.push(item);
+    saveItems(items);
+    renderItem(item);
+
+    nameInput.value = '';
+    qtyInput.value = '';
+    catSelect.selectedIndex = 0;
+    notesInput.value = '';
+    nameInput.focus();
+  });
+
+  // Enter key submits
+  form.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') form.querySelector('button').click();
+  });
+
+  // Delete handler (event delegation)
+  section.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-delete');
+    if (!btn) return;
+    const tr = btn.closest('tr.user-added');
+    if (!tr) return;
+    const id = tr.dataset.id;
+    const items = loadItems().filter(i => i.id !== id);
+    saveItems(items);
+    tr.remove();
+  });
+
+  // Render all stored items on load
+  loadItems().forEach(renderItem);
+})();
+
+// ── Feature 2: Rally Point Location Editor ──
+(function() {
+  const STORAGE_KEY = 'bugout-rally';
+  const section = document.getElementById('rally');
+  if (!section) return;
+
+  const table = section.querySelector('table');
+  if (!table) return;
+  const tbody = table.querySelector('tbody');
+  if (!tbody) return;
+
+  function loadRally() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  function saveRally(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  const rows = tbody.querySelectorAll('tr');
+  const placeholders = [
+    'Click to set home address\u2026',
+    'Click to set a landmark within 5 mi\u2026',
+    'Click to set a point on your primary route\u2026'
+  ];
+
+  rows.forEach((row, idx) => {
+    const rallyIdx = String(idx + 1);
+    const cell = row.querySelectorAll('td')[1];
+    if (!cell) return;
+
+    const data = loadRally();
+    const savedValue = data[rallyIdx];
+    const originalText = cell.textContent.trim();
+
+    // Create editable span
+    const span = document.createElement('span');
+    span.className = 'rally-editable';
+
+    if (savedValue) {
+      span.textContent = savedValue;
+      span.classList.add('has-value');
+    } else {
+      span.textContent = placeholders[idx];
+      span.classList.add('placeholder');
+    }
+
+    cell.textContent = '';
+    cell.appendChild(span);
+
+    // Click to edit
+    span.addEventListener('click', function() {
+      const currentVal = span.classList.contains('placeholder') ? '' : span.textContent;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'rally-input';
+      input.value = currentVal;
+      input.placeholder = placeholders[idx];
+
+      cell.textContent = '';
+      cell.appendChild(input);
+      input.focus();
+      input.select();
+
+      function save() {
+        const val = input.value.trim();
+        const data = loadRally();
+        const newSpan = document.createElement('span');
+        newSpan.className = 'rally-editable';
+
+        if (val) {
+          data[rallyIdx] = val;
+          newSpan.textContent = val;
+          newSpan.classList.add('has-value');
+        } else {
+          delete data[rallyIdx];
+          newSpan.textContent = placeholders[idx];
+          newSpan.classList.add('placeholder');
+        }
+
+        saveRally(data);
+        cell.textContent = '';
+        cell.appendChild(newSpan);
+
+        // Re-attach click handler
+        newSpan.addEventListener('click', span.onclick);
+        // Copy the click handler by re-running this pattern
+        newSpan.addEventListener('click', function() {
+          newSpan.click = span.click;
+          // Trigger edit on the new span
+          const evt = new Event('click');
+          // Actually, we need to re-bind properly — use recursive approach
+        });
+      }
+
+      // Simpler approach: just reload the rally UI
+      function saveAndRebuild() {
+        const val = input.value.trim();
+        const data = loadRally();
+        if (val) {
+          data[rallyIdx] = val;
+        } else {
+          delete data[rallyIdx];
+        }
+        saveRally(data);
+        rebuildRallyCell(cell, rallyIdx, idx, originalText);
+      }
+
+      input.addEventListener('blur', saveAndRebuild);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { input.removeEventListener('blur', saveAndRebuild); saveAndRebuild(); }
+        if (e.key === 'Escape') { input.removeEventListener('blur', saveAndRebuild); rebuildRallyCell(cell, rallyIdx, idx, originalText); }
+      });
+    });
+  });
+
+  function rebuildRallyCell(cell, rallyIdx, idx, originalText) {
+    const data = loadRally();
+    const savedValue = data[rallyIdx];
+
+    const span = document.createElement('span');
+    span.className = 'rally-editable';
+
+    if (savedValue) {
+      span.textContent = savedValue;
+      span.classList.add('has-value');
+    } else {
+      span.textContent = placeholders[idx];
+      span.classList.add('placeholder');
+    }
+
+    cell.textContent = '';
+    cell.appendChild(span);
+
+    span.addEventListener('click', function() {
+      const currentVal = span.classList.contains('placeholder') ? '' : span.textContent;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'rally-input';
+      input.value = currentVal;
+      input.placeholder = placeholders[idx];
+
+      cell.textContent = '';
+      cell.appendChild(input);
+      input.focus();
+      input.select();
+
+      function saveAndRebuild2() {
+        const val = input.value.trim();
+        const d = loadRally();
+        if (val) { d[rallyIdx] = val; } else { delete d[rallyIdx]; }
+        saveRally(d);
+        rebuildRallyCell(cell, rallyIdx, idx, originalText);
+      }
+
+      input.addEventListener('blur', saveAndRebuild2);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { input.removeEventListener('blur', saveAndRebuild2); saveAndRebuild2(); }
+        if (e.key === 'Escape') { input.removeEventListener('blur', saveAndRebuild2); rebuildRallyCell(cell, rallyIdx, idx, originalText); }
+      });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+{
+  "timestamp": "2026-03-26T14:30:00.000Z",
+  "assessment": {
+    "solar": {
+      "level": 4,
+      "label": "Elevated",
+      "reasoning": "Kp index at 3 with moderate CME activity. 29 CMEs detected in 7 days but no Earth-directed events. SWPC Geomagnetic Scale at G1. M-flare probability at 35%, X-flare at 8%."
+    },
+    "nuclear": {
+      "level": 4,
+      "label": "Elevated",
+      "reasoning": "Doomsday Clock remains at 89 seconds to midnight. GDELT tracking elevated military article volume. Arms control monitoring shows continued geopolitical tension."
+    },
+    "weather": {
+      "level": 2,
+      "label": "Low",
+      "reasoning": "No active severe weather alerts for Lancaster County. Clear conditions forecast for 48 hours. No tornado watches or warnings in effect."
+    },
+    "overall": {
+      "level": 4,
+      "label": "Elevated",
+      "reasoning": "Moderate solar activity and sustained geopolitical tensions drive an elevated baseline. Weather conditions are favorable. Recommend maintaining standard readiness posture with attention to solar and nuclear monitors."
+    },
+    "diamond": {
+      "environmental": {
+        "level": 3,
+        "reasoning": "D0 Abnormally Dry drought conditions in region. Severity score 17/100. Manageable but worth monitoring for agricultural impact."
+      },
+      "climate": {
+        "level": 3,
+        "reasoning": "Seasonal patterns within normal range. No extreme temperature events forecast. Long-term trends continue upward."
+      },
+      "hostile": {
+        "level": 6,
+        "reasoning": "Elevated international tensions. GDELT military escalation articles trending above baseline. Multiple regional conflicts active."
+      },
+      "trade": {
+        "level": 4,
+        "reasoning": "FRED economic stress score at 13/100. Supply chains functional but fragile. Energy prices stable for now."
+      },
+      "response": {
+        "level": 5,
+        "reasoning": "Government response capacity adequate but strained. Infrastructure aging concerns persist. Community resilience varies by region."
+      },
+      "composite": {
+        "level": 4,
+        "label": "Elevated",
+        "reasoning": "Diamond factors show a society under moderate stress. Hostile neighbors factor is the primary concern at 6/10, driven by international tensions. Economic and environmental factors remain manageable."
+      }
+    },
+    "_meta": {
+      "source": "llm",
+      "model": "claude-sonnet-4-20250514"
+    }
+  },
+  "sourceData": {
+    "solarData": {
+      "status": "OK",
+      "currentKp": 2,
+      "maxKp24h": 3,
+      "kpDescription": "Quiet to Unsettled",
+      "stormLevel": "G0 (No Storm)"
+    },
+    "donkiData": {
+      "status": "OK",
+      "cmeCount": 29,
+      "flareCount": 2,
+      "stormCount": 1,
+      "hasEarthDirectedCME": false,
+      "hasXFlare": false,
+      "maxStormKp": 4
+    },
+    "swpcAlertsData": {
+      "status": "OK",
+      "alertCount": 7,
+      "highestGeomagScale": 1,
+      "highestRadioBlackout": 1,
+      "hasWarning": false,
+      "hasWatch": true,
+      "forecast": {
+        "mFlareProb": 35,
+        "xFlareProb": 8
+      }
+    },
+    "weatherData": {
+      "status": "OK",
+      "count": 0,
+      "highestSeverity": "None",
+      "statewideSevereCount": 0,
+      "hasTornadoWarning": false,
+      "hasTornadoWatch": false,
+      "alerts": []
+    },
+    "nuclearData": {
+      "status": "OK",
+      "headlineCount": 4,
+      "doomsdayClock": {
+        "value": "89 seconds",
+        "lastUpdated": "January 2025"
+      },
+      "headlines": [
+        { "source": "Reuters", "title": "UN Security Council discusses renewed arms control framework" },
+        { "source": "AP", "title": "NATO allies increase defense spending commitments" },
+        { "source": "BAS", "title": "Bulletin of the Atomic Scientists releases annual assessment" },
+        { "source": "Reuters", "title": "Diplomatic channels remain open for nuclear dialogue" }
+      ]
+    },
+    "gdeltData": {
+      "status": "OK",
+      "totalArticleCount": 1247,
+      "nuclear": { "articleCount": 156 },
+      "military": { "articleCount": 423 },
+      "unrest": { "articleCount": 89 },
+      "avgNuclearMilitaryTone": -2.4,
+      "topArticles": [
+        { "title": "Global defense spending reaches new highs amid security concerns", "queryCategory": "military", "tone": -3.2 },
+        { "title": "Nuclear energy expansion plans announced in multiple countries", "queryCategory": "nuclear", "tone": 1.5 },
+        { "title": "Cybersecurity threats to critical infrastructure on the rise", "queryCategory": "military", "tone": -4.1 },
+        { "title": "International arms control negotiations enter new phase", "queryCategory": "nuclear", "tone": -1.8 },
+        { "title": "Regional stability concerns drive diplomatic engagements", "queryCategory": "military", "tone": -2.3 }
+      ]
+    },
+    "droughtData": {
+      "status": "OK",
+      "highestCategory": "D0 - Abnormally Dry",
+      "severityScore": 17
+    },
+    "economicData": {
+      "status": "OK",
+      "stressScore": 13
+    }
+  },
+  "meta": {
+    "source": "llm",
+    "model": "claude-sonnet-4-20250514",
+    "sourceCount": 8
+  }
+}
