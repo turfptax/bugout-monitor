@@ -8,6 +8,8 @@ interface EquipmentState {
   addItem: (item: Omit<EquipmentItem, 'id' | 'added'>) => void;
   editItem: (id: string, updates: Partial<EquipmentItem>) => void;
   deleteItem: (id: string) => void;
+  bulkUpdateStatus: (ids: string[], status: 'have' | 'wanted' | 'ordered') => void;
+  bulkDelete: (ids: string[]) => void;
   importItems: (items: EquipmentItem[]) => void;
   mergeItems: (items: EquipmentItem[]) => void;
   exportItems: () => EquipmentItem[];
@@ -38,6 +40,20 @@ export const useEquipmentStore = create<EquipmentState>()(
 
       deleteItem: (id) => {
         set((s) => ({ items: s.items.filter((item) => item.id !== id) }));
+      },
+
+      bulkUpdateStatus: (ids, status) => {
+        const idSet = new Set(ids);
+        set((s) => ({
+          items: s.items.map((item) =>
+            idSet.has(item.id) ? { ...item, status } : item
+          ),
+        }));
+      },
+
+      bulkDelete: (ids) => {
+        const idSet = new Set(ids);
+        set((s) => ({ items: s.items.filter((item) => !idSet.has(item.id)) }));
       },
 
       importItems: (items) => {

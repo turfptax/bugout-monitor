@@ -5,9 +5,12 @@ import type { EquipmentItem } from '../../types/equipment';
 interface Props {
   category: string;
   items: EquipmentItem[];
+  selectMode?: boolean;
+  selectedIds?: Set<string>;
+  onToggleSelect?: (id: string) => void;
 }
 
-export default function CategorySection({ category, items }: Props) {
+export default function CategorySection({ category, items, selectMode, selectedIds, onToggleSelect }: Props) {
   const [isOpen, setIsOpen] = useState(true);
 
   if (items.length === 0) return null;
@@ -46,6 +49,10 @@ export default function CategorySection({ category, items }: Props) {
         <table className="w-full border-collapse text-sm animate-fade-in">
           <thead>
             <tr>
+              {selectMode && (
+                <th className="bg-surface-2 text-accent text-center px-2 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold w-10">
+                </th>
+              )}
               <th className="bg-surface-2 text-accent text-left px-3 py-1.5 border border-border text-xs uppercase tracking-wider font-semibold">
                 Item
               </th>
@@ -66,7 +73,13 @@ export default function CategorySection({ category, items }: Props) {
           </thead>
           <tbody>
             {items.map((item) => (
-              <ItemRow key={item.id} item={item} />
+              <ItemRow
+                key={item.id}
+                item={item}
+                selectMode={selectMode}
+                isSelected={selectedIds?.has(item.id) ?? false}
+                onToggleSelect={onToggleSelect}
+              />
             ))}
           </tbody>
         </table>

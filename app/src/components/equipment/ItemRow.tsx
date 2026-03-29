@@ -4,9 +4,12 @@ import type { EquipmentItem } from '../../types/equipment';
 
 interface Props {
   item: EquipmentItem;
+  selectMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: (id: string) => void;
 }
 
-export default function ItemRow({ item }: Props) {
+export default function ItemRow({ item, selectMode, isSelected, onToggleSelect }: Props) {
   const editItem = useEquipmentStore((s) => s.editItem);
   const deleteItem = useEquipmentStore((s) => s.deleteItem);
   const [editing, setEditing] = useState<string | null>(null);
@@ -15,6 +18,7 @@ export default function ItemRow({ item }: Props) {
   const isUserAdded = !!item.added;
 
   const startEdit = (field: string, value: string) => {
+    if (selectMode) return;
     setEditing(field);
     setEditValue(value);
   };
@@ -63,6 +67,7 @@ export default function ItemRow({ item }: Props) {
   };
 
   const cycleStatus = () => {
+    if (selectMode) return;
     const order: Array<'have' | 'wanted' | 'ordered'> = ['have', 'wanted', 'ordered'];
     const current = order.indexOf(item.status || 'have');
     const next = order[(current + 1) % order.length];
@@ -70,7 +75,22 @@ export default function ItemRow({ item }: Props) {
   };
 
   return (
-    <tr className={`text-sm hover:bg-accent/[0.04] transition-colors group ${item.status === 'wanted' ? 'opacity-75' : ''}`}>
+    <tr
+      className={`text-sm hover:bg-accent/[0.04] transition-colors group ${item.status === 'wanted' ? 'opacity-75' : ''} ${isSelected ? 'bg-accent/10' : ''}`}
+      onClick={selectMode ? () => onToggleSelect?.(item.id) : undefined}
+      style={selectMode ? { cursor: 'pointer' } : undefined}
+    >
+      {selectMode && (
+        <td className="py-1.5 px-2 border border-border text-center w-10">
+          <input
+            type="checkbox"
+            checked={isSelected ?? false}
+            onChange={() => onToggleSelect?.(item.id)}
+            onClick={(e) => e.stopPropagation()}
+            className="accent-[var(--accent)] w-3.5 h-3.5 cursor-pointer"
+          />
+        </td>
+      )}
       <td className="py-1.5 px-3 border border-border" style={isUserAdded ? { borderLeft: `3px solid ${item.status === 'wanted' ? '#d29922' : item.status === 'ordered' ? '#58a6ff' : '#58a6ff'}` } : {}}>
         <div className="flex items-center gap-1.5">
           {isUserAdded && <span className="text-accent-2 text-xs" title="User added">&#9733;</span>}
