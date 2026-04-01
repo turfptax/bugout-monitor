@@ -17,15 +17,31 @@ An open-source tool that monitors global threats — solar storms, nuclear tensi
 
 ## Quick Start
 
-### Windows (one-click)
+### Windows — ZIP Download (easiest)
+1. **Install [Node.js](https://nodejs.org)** (LTS version, click Next through the installer)
+2. **Download** this repo: click the green **"Code"** button above, then **"Download ZIP"**
+3. **Extract** the ZIP folder anywhere (Desktop, Downloads, etc.)
+4. **Double-click `install.bat`** — wait for "INSTALLATION COMPLETE" (takes 1-3 minutes)
+5. **Double-click `start.bat`** — opens the dashboard server
+6. **Open http://localhost:8080** in your browser
+
+> If you see errors, check `install-log.txt` or `start-log.txt` in the project folder.
+
+### Windows — Git Clone
 ```bash
 git clone https://github.com/turfptax/bugout-monitor.git
 cd bugout-monitor
 install.bat
 ```
-The installer checks for Node.js, installs all dependencies, builds the React app, and runs the setup wizard.
-
 After installation, double-click **`start.bat`** to launch the dashboard.
+
+### Docker
+```bash
+git clone https://github.com/turfptax/bugout-monitor.git
+cd bugout-monitor
+docker compose up -d
+# Open http://localhost:8080
+```
 
 ### Mac / Linux
 ```bash
