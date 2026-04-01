@@ -89,7 +89,7 @@ echo Server starting: %DATE% %TIME% >> "%LOGFILE%"
 echo URL: http://%LOCAL_IP%:8080 >> "%LOGFILE%"
 echo. >> "%LOGFILE%"
 
-call npx http-server . -p 8080 -a 0.0.0.0 -c-1 --cors 2>> "%LOGFILE%"
+call npx http-server dist -p 8080 -a 0.0.0.0 -c-1 --cors 2>> "%LOGFILE%"
 
 REM ── If we get here, the server exited ──
 echo.
