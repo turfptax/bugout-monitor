@@ -1,0 +1,41 @@
+# Bugout Monitor — Docker Compose
+#
+# Usage:
+#   docker compose up -d          # Start the dashboard
+#   docker compose up -d --build  # Rebuild and start
+#
+# The dashboard will be available at http://localhost:8080
+#
+# To run a threat scan:
+#   docker compose exec bugout-monitor node monitor/index.js
+#
+# To schedule daily scans, add a cron job on the host:
+#   0 6 * * * docker compose -f /path/to/docker-compose.yml exec -T bugout-monitor node monitor/index.js
+
+services:
+  bugout-monitor:
+    build: .
+    container_name: nomad_bugout_monitor
+    ports:
+      - "${PORT:-8080}:8080"
+    volumes:
+      # Persist user config and monitor data across restarts
+      - bugout-data:/app/data
+      - bugout-logs:/app/monitor/logs
+      # Mount .env for API keys (create this on the host)
+      - ./.env:/app/monitor/.env:ro
+      # Mount user-config if it exists
+      - ./user-config.json:/app/user-config.json:ro
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  bugout-data:
+  bugout-logs:

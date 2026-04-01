@@ -1,0 +1,44 @@
+{
+  "service_name": "nomad_bugout_monitor",
+  "friendly_name": "Bugout Monitor",
+  "container_image": "ghcr.io/turfptax/bugout-monitor:latest",
+  "container_command": null,
+  "container_config": {
+    "Env": [
+      "NODE_ENV=production",
+      "PORT=8080"
+    ],
+    "HostConfig": {
+      "PortBindings": {
+        "8080/tcp": [{ "HostPort": "8400" }]
+      },
+      "Binds": [
+        "/opt/project-nomad/storage/bugout-monitor/data:/app/data",
+        "/opt/project-nomad/storage/bugout-monitor/logs:/app/monitor/logs"
+      ],
+      "RestartPolicy": { "Name": "unless-stopped" }
+    }
+  },
+  "description": "AI-powered disaster preparedness dashboard with OSINT threat monitoring, equipment tracking, and LLM integration. Monitors solar storms, nuclear threats, weather, economic indicators via 8 free APIs.",
+  "powered_by": "Bugout Monitor (Open Source)",
+  "icon": "IconShieldCheck",
+  "installed": false,
+  "installation_status": "idle",
+  "is_dependency_service": false,
+  "display_order": 50,
+  "ui_location": "8400",
+  "metadata": {
+    "version": "1.0.0",
+    "github": "https://github.com/turfptax/bugout-monitor",
+    "features": [
+      "8-source OSINT threat monitoring",
+      "AI chat with OpenRouter + LM Studio",
+      "Equipment tracker with have/wanted/ordered",
+      "Diamond Collapse Index",
+      "Interactive bugout planning",
+      "MCP server for Claude integration"
+    ]
+  },
+  "depends_on": null,
+  "source_repo": "https://github.com/turfptax/bugout-monitor"
+}
