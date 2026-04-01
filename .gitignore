@@ -10,6 +10,7 @@ bugout-backup-*.json
 
 # Runtime
 monitor/logs/
+install-log.txt
 node_modules/
 dist/
 app/dist/
