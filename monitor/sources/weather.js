@@ -21,24 +21,50 @@ async function loadConfig() {
 
 const USER_AGENT = 'BugoutThreatMonitor/1.0 (bugout-monitor)';
 
+/**
+ * Build the list of UGC codes that identify the user's county.
+ *
+ * NWS tags an alert with forecast zones (NEZ066) or county codes (NEC109)
+ * depending on the product, so both have to be matched. The configured
+ * ugcZone may be a single code, a comma separated string, or an array.
+ * The county code is derived from the FIPS code when one is configured
+ * (state abbreviation + 'C' + the three county digits).
+ */
+export function buildUgcCodes(location = {}) {
+  const codes = new Set();
+
+  const configured = location.ugcZone;
+  const list = Array.isArray(configured)
+    ? configured
+    : String(configured || '').split(/[,\s]+/);
+  for (const entry of list) {
+    const code = String(entry).trim().toUpperCase();
+    if (code) codes.add(code);
+  }
+
+  const state = String(location.state || '').trim().toUpperCase();
+  const fips = String(location.fipsCode || '').replace(/\D/g, '');
+  const countyDigits = fips.slice(2);
+  if (state && fips.length === 5 && countyDigits !== '000') {
+    codes.add(`${state}C${countyDigits}`);
+  }
+
+  return [...codes];
+}
+
 export async function fetchWeather() {
   try {
     const config = await loadConfig();
     const state = config.location.state;
     const county = config.location.county;
-    const ugcZone = config.location.ugcZone;
+    const ugcCodes = buildUgcCodes(config.location);
 
     const NWS_ALERTS_URL = `https://api.weather.gov/alerts/active?area=${state}`;
 
-    // County identifiers for filtering
-    const countyPatterns = [county];
-    // Also add the base city from profile if available
-    if (config.profile?.baseCityState) {
-      const city = config.profile.baseCityState.split(',')[0].trim();
-      if (city && !countyPatterns.includes(city)) {
-        countyPatterns.push(city);
-      }
-    }
+    // County name is a fallback for when the UGC codes do not match.
+    // The base city name is deliberately not used: "Lincoln" also matches
+    // Lincoln County, NE, which is 200 miles west of Lincoln in Lancaster County.
+    const countyPatterns = county ? [String(county).toLowerCase()] : [];
 
     const response = await fetch(NWS_ALERTS_URL, {
       headers: {
@@ -59,12 +85,12 @@ export async function fetchWeather() {
     const localAlerts = features.filter(f => {
       const props = f.properties;
       const areaDesc = (props.areaDesc || '').toLowerCase();
-      const ugcCodes = props.geocode?.UGC || [];
+      const alertCodes = (props.geocode?.UGC || []).map(c => String(c).toUpperCase());
 
-      const matchesArea = countyPatterns.some(p => areaDesc.includes(p.toLowerCase()));
-      const matchesUGC = ugcZone ? ugcCodes.includes(ugcZone) : false;
+      const matchesUGC = ugcCodes.some(code => alertCodes.includes(code));
+      const matchesArea = countyPatterns.some(p => areaDesc.includes(p));
 
-      return matchesArea || matchesUGC;
+      return matchesUGC || matchesArea;
     });
 
     // Extract and sort by severity

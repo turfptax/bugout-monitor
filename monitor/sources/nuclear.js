@@ -23,7 +23,8 @@ const FEEDS = [
   },
   {
     name: 'IAEA News',
-    url: 'https://www.iaea.org/feeds/topnews.xml',
+    // The old /feeds/topnews.xml path returns 404; the live feed has no extension.
+    url: 'https://www.iaea.org/feeds/topnews',
   },
 ];
 
@@ -35,6 +36,26 @@ const DOOMSDAY_CLOCK = {
 };
 
 const HOURS_48 = 48 * 60 * 60 * 1000;
+
+/**
+ * Parse an RSS item date into a Date, or null when it cannot be read.
+ * rss-parser fills isoDate whenever it understands pubDate. The IAEA feed
+ * uses a bare "YY-MM-DD  HH:mm" (Vienna time) that Date() rejects, so that
+ * shape is rebuilt as ISO 8601 first. Treating it as UTC+1 year round is at
+ * most an hour off, which does not matter for a 48 hour window.
+ */
+function parseFeedDate(item) {
+  if (item.isoDate) return new Date(item.isoDate);
+  const raw = String(item.pubDate || '').trim();
+  if (!raw) return null;
+  const compact = raw.match(/^([0-9]{2})-([0-9]{2})-([0-9]{2}) +([0-9]{2}):([0-9]{2})$/);
+  if (compact) {
+    const [, yy, mm, dd, hh, min] = compact;
+    return new Date(`20${yy}-${mm}-${dd}T${hh}:${min}:00+01:00`);
+  }
+  const parsed = new Date(raw);
+  return isNaN(parsed) ? null : parsed;
+}
 
 export async function fetchNuclear() {
   try {
@@ -54,7 +75,7 @@ export async function fetchNuclear() {
               link: item.link,
               source: feed.name,
               date: item.pubDate || item.isoDate,
-              parsedDate: new Date(item.pubDate || item.isoDate),
+              parsedDate: parseFeedDate(item),
             })),
           };
         } catch (err) {

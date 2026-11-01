@@ -9,7 +9,7 @@
     "lon": -96.7026,
     "state": "NE",
     "county": "Lancaster",
-    "ugcZone": "NEZ055",
+    "ugcZone": "NEZ066",
     "fipsCode": "31109",
     "nearbyTargets": ["Offutt AFB (50mi NE) - USSTRATCOM HQ"],
     "prevailingWinds": "west-to-east"
@@ -54,6 +54,6 @@
   },
   "llm": {
     "provider": "openrouter",
-    "model": "google/gemini-2.0-flash-001"
+    "model": "google/gemini-2.5-flash-lite"
   }
 }

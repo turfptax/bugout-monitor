@@ -153,7 +153,7 @@ async function main() {
     lon = parseFloat(await ask(`${CYAN}Longitude: ${RESET}`));
     state = await ask(`${CYAN}State abbreviation (e.g., NE): ${RESET}`);
     county = await ask(`${CYAN}County name: ${RESET}`);
-    ugcZone = await ask(`${CYAN}NWS UGC zone code (e.g., NEZ055): ${RESET}`);
+    ugcZone = await ask(`${CYAN}NWS UGC zone code (e.g., NEZ066): ${RESET}`);
     fipsCode = await ask(`${CYAN}County FIPS code (e.g., 31109): ${RESET}`);
     city = cityState.split(',')[0].trim();
   }
@@ -193,12 +193,12 @@ async function main() {
   const llmChoice = await ask(`\n${CYAN}Choose (1-2) ${DIM}[default: 1]${RESET}: `) || '1';
 
   let openrouterKey = '';
-  let model = 'google/gemini-2.0-flash-001';
+  let model = 'google/gemini-2.5-flash-lite';
 
   if (llmChoice === '1') {
     console.log(`\n${DIM}Get a free key at: https://openrouter.ai/keys${RESET}`);
     openrouterKey = await ask(`${CYAN}OpenRouter API key: ${RESET}`);
-    const customModel = await ask(`${CYAN}Model ${DIM}[default: google/gemini-2.0-flash-001]${RESET}: `);
+    const customModel = await ask(`${CYAN}Model ${DIM}[default: google/gemini-2.5-flash-lite]${RESET}: `);
     if (customModel.trim()) model = customModel.trim();
   }
 

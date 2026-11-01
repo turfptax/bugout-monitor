@@ -51,7 +51,7 @@ export const useSettingsStore = create<SettingsState>()(
       },
       aiProvider: 'none',
       openrouterKey: '',
-      openrouterModel: 'google/gemini-2.0-flash-001',
+      openrouterModel: 'google/gemini-2.5-flash-lite',
       lmstudioUrl: 'http://localhost:1234',
       lmstudioModel: '',
 

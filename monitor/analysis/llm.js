@@ -12,7 +12,7 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
  */
 export async function analyzeThreats(solarData, nuclearData, weatherData, donkiData, swpcAlertsData, gdeltData, droughtData, economicData) {
   const apiKey = process.env.OPENROUTER_API_KEY;
-  const model = process.env.OPENROUTER_MODEL || 'google/gemini-2.0-flash-001';
+  const model = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash-lite';
 
   if (!apiKey) {
     throw new Error('OPENROUTER_API_KEY not set in .env');

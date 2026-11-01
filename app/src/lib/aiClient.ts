@@ -43,7 +43,7 @@ function getHeaders(config: AiClientConfig): Record<string, string> {
 
 function getModel(config: AiClientConfig): string {
   if (config.provider === 'openrouter') {
-    return config.openrouterModel || 'google/gemini-2.0-flash-001';
+    return config.openrouterModel || 'google/gemini-2.5-flash-lite';
   }
   return config.lmstudioModel || 'default';
 }
